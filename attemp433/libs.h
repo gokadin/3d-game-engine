@@ -7,6 +7,7 @@
 
 #include <glew.h>
 #include <glfw3.h>
+
 #include <glm.hpp>
 #include <vec2.hpp>
 #include <vec3.hpp>
@@ -17,9 +18,12 @@
 
 #include <SOIL2.h>
 
+#include "Shader.h"
+
 struct Vertex
 {
     glm::vec3 position;
     glm::vec3 color;
     glm::vec2 texcoord;
+    glm::vec3 normal;
 };
