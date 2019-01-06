@@ -29,109 +29,6 @@ void frameBufferResizeCallback(GLFWwindow* window, int fbW, int gbH)
     glViewport(0, 0, fbW, fbW);
 }
 
-bool loadShaders(GLuint &program)
-{
-    bool loadSuccess = true;
-    char infoLog[512];
-    GLint success;
-
-    std::string temp = "";
-    std::string src = "";
-
-    std::ifstream in_file;
-
-    // vertex
-    in_file.open("vertex_core.glsl");
-
-    if (in_file.is_open())
-    {
-        while (std::getline(in_file, temp))
-        {
-            src += temp + "\n";
-        }
-    }
-    else
-    {
-        std::cout << "error::loadShaders::could_no_open_vertex_file" << std::endl;
-        loadSuccess = false;
-    }
-
-    in_file.close();
-
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    const GLchar* vertSrc = src.c_str();
-    glShaderSource(vertexShader, 1, &vertSrc, NULL);
-    glCompileShader(vertexShader);
-
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout << "error::loadShaders::could_no_compile_vertex_shader" << std::endl;
-        std::cout << infoLog << std::endl;
-        loadSuccess = false;
-    }
-
-    temp = "";
-    src = "";
-
-    // fragment
-    in_file.open("fragment_core.glsl");
-
-    if (in_file.is_open())
-    {
-        while (std::getline(in_file, temp))
-        {
-            src += temp + "\n";
-        }
-    }
-    else
-    {
-        std::cout << "error::loadShaders::could_no_open_fragment_shader" << std::endl;
-        loadSuccess = false;
-    }
-
-    in_file.close();
-
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    const GLchar* fragmentSrc = src.c_str();
-    glShaderSource(fragmentShader, 1, &fragmentSrc, NULL);
-    glCompileShader(fragmentShader);
-
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cout << "error::loadShaders::could_no_compile_fragment_shader" << std::endl;
-        std::cout << infoLog << std::endl;
-        loadSuccess = false;
-    }
-
-    // program
-    program = glCreateProgram();
-
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-
-    glLinkProgram(program);
-
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-    if (!success)
-    {
-        glGetProgramInfoLog(program, 512, NULL, infoLog);
-        std::cout << "error::loadShaders::could_no_link_program" << std::endl;
-        std::cout << infoLog << std::endl;
-        loadSuccess = false;
-    }
-
-    // end
-    glUseProgram(0);
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    return loadSuccess;
-}
-
 void updateInput(GLFWwindow* window, glm::vec3& position, glm::vec3& rotation, glm::vec3& scale)
 {
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -251,61 +148,8 @@ int main()
 
     // textures
 
-    // texture 0
-    int imageWidth = 0;
-    int imageHeight = 0;
-    unsigned char* image = SOIL_load_image("images/test.png", &imageWidth, &imageHeight, NULL, SOIL_LOAD_RGBA);
-
-    GLuint texture0;
-    glGenTextures(1, &texture0);
-    glBindTexture(GL_TEXTURE_2D, texture0);
-     
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-    if (image)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "error::main::texture_loading_failed" << std::endl;
-    }
-
-    glActiveTexture(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    SOIL_free_image_data(image);
-
-    // texture1
-    int imageWidth1 = 0;
-    int imageHeight1 = 0;
-    unsigned char* image1 = SOIL_load_image("images/brick.png", &imageWidth1, &imageHeight1, NULL, SOIL_LOAD_RGBA);
-
-    GLuint texture1;
-    glGenTextures(1, &texture1);
-    glBindTexture(GL_TEXTURE_2D, texture1);
-     
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-    if (image1)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth1, imageHeight1, 0, GL_RGBA, GL_UNSIGNED_BYTE, image1);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "error::main::texture_loading_failed" << std::endl;
-    }
-
-    glActiveTexture(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    SOIL_free_image_data(image1);
+    Texture texture0("images/test.png", GL_TEXTURE_2D, 0);
+    Texture texture1("images/brick.png", GL_TEXTURE_2D, 1);
 
     // matrix
 
@@ -366,8 +210,8 @@ int main()
 
         // draw
 
-        core_program.set1i(0, "texture0");
-        core_program.set1i(1, "texture1");
+        core_program.set1i(texture0.getTextureUnit(), "texture0");
+        core_program.set1i(texture1.getTextureUnit(), "texture1");
 
         // move rotate scale
         ModelMatrix = glm::mat4(1.f);
@@ -391,10 +235,8 @@ int main()
 
         core_program.use();
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture0);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture1);
+        texture0.bind();
+        texture1.bind();
 
         glBindVertexArray(VAO);
 
