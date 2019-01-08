@@ -17,7 +17,9 @@
 class Shader
 {
 private:
-    GLuint id;
+    GLuint _id;
+    const int _versionMajor;
+    const int _versionMinor;
 
     std::string loadShaderSource(std::string filename)
     {
@@ -40,6 +42,9 @@ private:
         }
 
         in_file.close();
+
+        std::string version = std::to_string(_versionMajor) + std::to_string(_versionMinor) + "0";
+        src.replace(src.find("#version"), 12, "#version " + version);
 
         return src;
     }
@@ -71,22 +76,22 @@ private:
         char infoLog[512];
         GLint success;
 
-        this->id = glCreateProgram();
+        _id = glCreateProgram();
 
-        glAttachShader(this->id, vertexShader);
+        glAttachShader(_id, vertexShader);
 
         if (geometryShader) {
-            glAttachShader(this->id, geometryShader);
+            glAttachShader(_id, geometryShader);
         }
 
-        glAttachShader(this->id, fragmentShader);
+        glAttachShader(_id, fragmentShader);
 
-        glLinkProgram(this->id);
+        glLinkProgram(_id);
 
-        glGetProgramiv(this->id, GL_LINK_STATUS, &success);
+        glGetProgramiv(_id, GL_LINK_STATUS, &success);
         if (!success)
         {
-            glGetProgramInfoLog(this->id, 512, NULL, infoLog);
+            glGetProgramInfoLog(_id, 512, NULL, infoLog);
             std::cout << "error::Shader::linkProgram::could_no_link_program" << std::endl;
             std::cout << infoLog << std::endl;
         }
@@ -95,7 +100,11 @@ private:
     }
 
 public:
-    Shader(std::string vertexFile, std::string fragmentFile, std::string geometryFile = "")
+    Shader(
+        const int versionMajor, const int versionMinor,
+        std::string vertexFile, std::string fragmentFile, std::string geometryFile = ""
+    )
+        : _versionMajor(versionMajor), _versionMinor(versionMinor)
     {
         GLuint vertexShader = 0;
         GLuint geometryShader = 0;
@@ -117,12 +126,12 @@ public:
 
     ~Shader()
     {
-        glDeleteProgram(this->id);
+        glDeleteProgram(_id);
     }
 
     void use()
     {
-        glUseProgram(this->id);
+        glUseProgram(_id);
     }
 
     void unuse()
@@ -134,7 +143,7 @@ public:
     {
         this->use();
 
-        glUniform1f(glGetUniformLocation(this->id, name), value);
+        glUniform1f(glGetUniformLocation(_id, name), value);
 
         this->unuse();
     }
@@ -143,7 +152,7 @@ public:
     {
         this->use();
 
-        glUniform1i(glGetUniformLocation(this->id, name), value);
+        glUniform1i(glGetUniformLocation(_id, name), value);
 
         this->unuse();
     }
@@ -152,7 +161,7 @@ public:
     {
         this->use();
 
-        glUniform2fv(glGetUniformLocation(this->id, name), 1, glm::value_ptr(value));
+        glUniform2fv(glGetUniformLocation(_id, name), 1, glm::value_ptr(value));
 
         this->unuse();
     }
@@ -161,7 +170,7 @@ public:
     {
         this->use();
 
-        glUniform3fv(glGetUniformLocation(this->id, name), 1, glm::value_ptr(value));
+        glUniform3fv(glGetUniformLocation(_id, name), 1, glm::value_ptr(value));
 
         this->unuse();
     }
@@ -170,7 +179,7 @@ public:
     {
         this->use();
 
-        glUniform4fv(glGetUniformLocation(this->id, name), 1, glm::value_ptr(value));
+        glUniform4fv(glGetUniformLocation(_id, name), 1, glm::value_ptr(value));
 
         this->unuse();
     }
@@ -179,7 +188,7 @@ public:
     {
         this->use();
 
-        glUniformMatrix4fv(glGetUniformLocation(this->id, name), 1, transpose, glm::value_ptr(value));
+        glUniformMatrix4fv(glGetUniformLocation(_id, name), 1, transpose, glm::value_ptr(value));
 
         this->unuse();
     }
@@ -188,7 +197,7 @@ public:
     {
         this->use();
 
-        glUniformMatrix3fv(glGetUniformLocation(this->id, name), 1, transpose, glm::value_ptr(value));
+        glUniformMatrix3fv(glGetUniformLocation(_id, name), 1, transpose, glm::value_ptr(value));
 
         this->unuse();
     }
