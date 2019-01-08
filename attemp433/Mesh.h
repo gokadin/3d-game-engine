@@ -7,6 +7,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Material.h"
+#include "Primitives.h"
 
 class Mesh
 {
@@ -23,6 +24,42 @@ private:
     glm::vec3 _scale;
 
     glm::mat4 _ModelMatrix;
+
+    void initVAO(Primitive *primitive)
+    {
+        this->_numberOfVertices = primitive->getNumberOfVertices();
+        this->_numberOfIndices = primitive->getNumberOfIndices();
+
+        glCreateVertexArrays(1, &this->_VAO);
+        glBindVertexArray(this->_VAO);
+
+        glGenBuffers(1, &this->_VBO);
+        glBindBuffer(GL_ARRAY_BUFFER, this->_VBO);
+        glBufferData(GL_ARRAY_BUFFER, this->_numberOfVertices * sizeof(Vertex), primitive->getVertices(), GL_STATIC_DRAW); // GL_STATIC_DRAW if not changing much ortherwise GL_DYNAMIC_DRAW
+
+        glGenBuffers(1, &this->_EBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->_EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->_numberOfIndices * sizeof(GLuint), primitive->getIndices(), GL_STATIC_DRAW);
+
+        // input assembly (how we tell the shader what each float is in our buffer)
+        // position
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
+        glEnableVertexAttribArray(0);
+
+        // color
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
+        glEnableVertexAttribArray(1);
+
+        // texcoord
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texcoord));
+        glEnableVertexAttribArray(2);
+
+        // normal
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
+        glEnableVertexAttribArray(3);
+
+        glBindVertexArray(0);
+    }
 
     void initVAO(
         Vertex* vertexArray,
@@ -99,6 +136,24 @@ public:
         this->_scale = glm::vec4(1.f);
 
         this->initVAO(vertexArray, numberOfVertices, indexArray, numberOfIndices);
+        this->updateModelMatrix();
+    }
+    
+    Mesh(
+        Primitive *primitive,
+        glm::vec3 position = glm::vec3(0.f),
+        glm::vec3 rotation = glm::vec3(0.f),
+        glm::vec3 scale = glm::vec3(1.f)
+    )
+        : _position(position)
+        , _rotation(rotation)
+        , _scale(scale)
+    {
+        this->_position = glm::vec3(0.f);
+        this->_rotation = glm::vec3(0.f);
+        this->_scale = glm::vec4(1.f);
+
+        this->initVAO(primitive);
         this->updateModelMatrix();
     }
 

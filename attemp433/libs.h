@@ -19,6 +19,7 @@
 #include <SOIL2.h>
 
 #include "Vertex.h"
+#include "Primitives.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "Material.h"

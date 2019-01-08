@@ -111,7 +111,12 @@ int main()
     // shaders init
     Shader core_program("vertex_core.glsl", "fragment_core.glsl");
 
-    Mesh test(vertices, numberOfVertices, indices, numberOfIndices);
+    Mesh test(
+        &Quad(),
+        glm::vec3(0.f),
+        glm::vec3(0.f), 
+        glm::vec3(1.f)
+    );
 
     // textures
     Texture texture0("images/test.png", GL_TEXTURE_2D, 0);
