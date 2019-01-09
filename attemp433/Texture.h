@@ -15,12 +15,10 @@ private:
     int width;
     int height;
     unsigned int type;
-    GLint textureUnit;
 
 public:
-    Texture(const char* filename, GLenum type, GLint textureUnit)
+    Texture(const char* filename, GLenum type)
         : type(type)
-        , textureUnit(textureUnit)
     {
         unsigned char* image = SOIL_load_image(filename, &this->width, &this->height, NULL, SOIL_LOAD_RGBA);
 
@@ -54,9 +52,9 @@ public:
 
     inline GLuint getId() const { return this->id; }
 
-    void bind()
+    void bind(const GLint textureUnit)
     {
-        glActiveTexture(GL_TEXTURE0 + this->textureUnit);
+        glActiveTexture(GL_TEXTURE0 + textureUnit);
         glBindTexture(this->type, this->id);;
     }
 
@@ -65,6 +63,4 @@ public:
         glActiveTexture(0);
         glBindTexture(this->type, 0);
     }
-
-    inline GLint getTextureUnit() const { return this->textureUnit; }
 };

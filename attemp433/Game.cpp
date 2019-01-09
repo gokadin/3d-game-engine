@@ -20,6 +20,18 @@ Game::Game(
     _nearPlane = 0.1f;
     _farPlane = 1000.f;
 
+    _dt = 0.f;
+    _curTime = 0.f;
+    _lastMouseX = 0.f;
+
+    _lastMouseX = 0.0;
+    _lastMouseY = 0.0;
+    _mouseX = 0.0;
+    _mouseY = 0.0;
+    _mouseOffsetX = 0.0;
+    _mouseOffsetY = 0.0;
+    _firstMouse = true;
+
     this->initGLFW();
     this->initWindow(title, resizable);
     this->initGLEW();
@@ -116,6 +128,8 @@ void Game::initOpenGLOptions()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Game::initMatrices()
@@ -139,22 +153,25 @@ void Game::initShaders()
 
 void Game::initTextures()
 {
-    _textures.push_back(new Texture("images/test.png", GL_TEXTURE_2D, 0));
-    _textures.push_back(new Texture("images/brick.png", GL_TEXTURE_2D, 1));
+    _textures.push_back(new Texture("images/test.png", GL_TEXTURE_2D));
+    _textures.push_back(new Texture("images/test_specular.png", GL_TEXTURE_2D));
+
+    _textures.push_back(new Texture("images/brick.png", GL_TEXTURE_2D));
+    _textures.push_back(new Texture("images/brick_specular.png", GL_TEXTURE_2D));
 }
 
 void Game::initMaterials()
 {
     _materials.push_back(new Material (
         glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f),
-        _textures[TEXTURE_TEST0]->getTextureUnit(), _textures[TEXTURE_BRICK1]->getTextureUnit())
+        0, 1)
     );
 }
 
 void Game::initMeshes()
 {
     _meshes.push_back(new Mesh(
-        &Quad(),
+        &Pyramid(),
         glm::vec3(0.f),
         glm::vec3(0.f), 
         glm::vec3(1.f)
@@ -172,7 +189,23 @@ void Game::initUniforms()
     _shaders[SHADER_CORE_PROGRAM]->setMat4fv(_ProjectionMatrix, "ProjectionMatrix");
 
     _shaders[SHADER_CORE_PROGRAM]->setVec3f(*_lights[0], "lightPos0");
+}
+
+void Game::updateUniforms()
+{
+    _ViewMatrix = glm::lookAt(_cameraPosition, _cameraPosition + _cameraFront, _worldUp);
+    _shaders[SHADER_CORE_PROGRAM]->setMat4fv(_ViewMatrix, "ViewMatrix");
     _shaders[SHADER_CORE_PROGRAM]->setVec3f(_cameraPosition, "cameraPos");
+
+    glfwGetFramebufferSize(_window, &_frameBufferWidth, &_frameBufferHeight);
+
+    _ProjectionMatrix = glm::perspective(
+        glm::radians(_fov),
+        static_cast<float>(_frameBufferWidth) / _frameBufferHeight,
+        _nearPlane,
+        _farPlane
+    );
+    _shaders[SHADER_CORE_PROGRAM]->setMat4fv(_ProjectionMatrix, "ProjectionMatrix");
 }
 
 int Game::getWindowShouldClose()
@@ -185,9 +218,77 @@ void Game::setWindowShouldClose()
     glfwSetWindowShouldClose(_window, GLFW_TRUE);
 }
 
-void Game::update()
+void Game::updateDt()
+{
+    _curTime = static_cast<float>(glfwGetTime());
+    _dt = _curTime - _lastTime;
+    _lastTime = _curTime;
+}
+
+void Game::updateKeyboardInput()
+{
+    if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
+        this->setWindowShouldClose();
+    }
+    if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS)
+    {
+        _cameraPosition.z -= 0.05f;
+    }
+    if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        _cameraPosition.z += 0.05f;
+    }
+    if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        _cameraPosition.x -= 0.05f;
+    }
+    if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        _cameraPosition.x += 0.05f;
+    }
+    if (glfwGetKey(_window, GLFW_KEY_C) == GLFW_PRESS)
+    {
+        _cameraPosition.y -= 0.05f;
+    }
+    if (glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        _cameraPosition.y += 0.05f;
+    }
+}
+
+void Game::updateMouseInput()
+{
+    glfwGetCursorPos(_window, &_mouseX, &_mouseY);
+
+    if (_firstMouse)
+    {
+        _lastMouseX = _mouseX;
+        _lastMouseY = _mouseY;
+        _firstMouse = false;
+    }
+
+    _mouseOffsetX = _mouseX - _lastMouseX;
+    _mouseOffsetY = _mouseY - _lastMouseY;
+
+    _lastMouseX = _mouseX;
+    _lastMouseY = _mouseY;
+}
+
+void Game::updateInput()
 {
     glfwPollEvents();
+
+    this->updateKeyboardInput();
+    this->updateMouseInput();
+}
+
+void Game::update()
+{
+    this->updateDt();
+    this->updateInput();
+
+    _meshes[0]->rotate(glm::vec3(0.f, 1.f, 0.f));
 }
 
 void Game::render()
@@ -195,26 +296,16 @@ void Game::render()
     glClearColor(0.f, 0.f, 0.f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    _shaders[SHADER_CORE_PROGRAM]->set1i(_textures[TEXTURE_TEST0]->getTextureUnit(), "texture0");
-    _shaders[SHADER_CORE_PROGRAM]->set1i(_textures[TEXTURE_BRICK1]->getTextureUnit(), "texture1");
-    _materials[MATERIAL_1]->sendToShader(*_shaders[SHADER_CORE_PROGRAM]);
+    this->updateUniforms();
 
-    glfwGetFramebufferSize(_window, &_frameBufferWidth, &_frameBufferHeight);
-    _ProjectionMatrix = glm::mat4(1.f);
-    _ProjectionMatrix = glm::perspective(
-        glm::radians(_fov),
-        static_cast<float>(_frameBufferWidth) / _frameBufferHeight,
-        _nearPlane,
-        _farPlane
-    );
-    _shaders[SHADER_CORE_PROGRAM]->setMat4fv(_ProjectionMatrix, "ProjectionMatrix");
+    _materials[MATERIAL_1]->sendToShader(*_shaders[SHADER_CORE_PROGRAM]);
 
     _shaders[SHADER_CORE_PROGRAM]->use();
 
-    _textures[TEXTURE_TEST0]->bind();
-    _textures[TEXTURE_BRICK1]->bind();
+    _textures[TEXTURE_BRICK]->bind(0);
+    _textures[TEXTURE_BRICK_SPECULAR]->bind(1);
 
-    _meshes[MESH_QUAD]->render(_shaders[SHADER_CORE_PROGRAM]);
+    _meshes[0]->render(_shaders[SHADER_CORE_PROGRAM]);
 
     glfwSwapBuffers(_window);
     glFlush();

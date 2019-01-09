@@ -161,7 +161,11 @@ public:
     {
         glDeleteVertexArrays(1, &this->_VAO);
         glDeleteBuffers(1, &this->_VBO);
-        glDeleteBuffers(1, &this->_EBO);
+
+        if (_numberOfIndices > 0)
+        {
+            glDeleteBuffers(1, &this->_EBO);
+        }
     }
 
     void setPosition(const glm::vec3 position) { this->_position = position; }
@@ -199,6 +203,13 @@ public:
 
         glBindVertexArray(this->_VAO);
 
-        glDrawElements(GL_TRIANGLES, this->_numberOfIndices, GL_UNSIGNED_INT, 0);
+        if (_numberOfIndices <= 0)
+        {
+            glDrawArrays(GL_TRIANGLES, 0, _numberOfVertices);
+        }
+        else
+        {
+            glDrawElements(GL_TRIANGLES, this->_numberOfIndices, GL_UNSIGNED_INT, 0);
+        }
     }
 };

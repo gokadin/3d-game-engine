@@ -1,6 +1,7 @@
 #pragma once
 
 #include "libs.h"
+#include "Camera.h"
 
 enum shaderEnum
 {
@@ -9,8 +10,10 @@ enum shaderEnum
 
 enum textureEnum
 {
-    TEXTURE_TEST0 = 0,
-    TEXTURE_BRICK1
+    TEXTURE_TEST = 0,
+    TEXTURE_TEST_SPECULAR,
+    TEXTURE_BRICK,
+    TEXTURE_BRICK_SPECULAR
 };
 
 enum materialEnum
@@ -26,6 +29,7 @@ enum meshEnum
 class Game
 {
 private:
+    // window
     GLFWwindow* _window;
     const int _WINDOW_WIDTH;
     const int _WINDOW_HEIGHT;
@@ -34,6 +38,7 @@ private:
     int _frameBufferWidth;
     int _frameBufferHeight;
 
+    // matrices
     glm::mat4 _ViewMatrix;
     glm::vec3 _cameraPosition;
     glm::vec3 _worldUp;
@@ -42,6 +47,20 @@ private:
     float _fov;
     float _nearPlane;
     float _farPlane;
+
+    // delta time
+    float _dt;
+    float _curTime;
+    float _lastTime;
+
+    // mouse input
+    double _lastMouseX;
+    double _lastMouseY;
+    double _mouseX;
+    double _mouseY;
+    double _mouseOffsetX;
+    double _mouseOffsetY;
+    bool _firstMouse;
 
     std::vector<Shader*> _shaders;
     std::vector<Texture*> _textures;
@@ -61,6 +80,8 @@ private:
     void initLights();
     void initUniforms();
 
+    void updateUniforms();
+
 public:
     Game(
         const char* title, 
@@ -74,6 +95,14 @@ public:
     int getWindowShouldClose();
 
     void setWindowShouldClose();
+
+    void updateDt();
+
+    void updateKeyboardInput();
+
+    void updateMouseInput();
+
+    void updateInput();
 
     void update();
 
