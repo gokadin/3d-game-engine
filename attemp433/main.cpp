@@ -2,7 +2,7 @@
 
 int main()
 {
-    Game game("attempt443", 640, 480, 4, 5, false);
+    Game game("attempt443", 1920, 1080, 4, 5, false);
 
     while (!game.getWindowShouldClose())
     {

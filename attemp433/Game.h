@@ -39,8 +39,6 @@ private:
     int _frameBufferHeight;
 
     // matrices
-    glm::mat4 _ViewMatrix;
-    glm::vec3 _cameraPosition;
     glm::vec3 _worldUp;
     glm::vec3 _cameraFront;
     glm::mat4 _ProjectionMatrix;
@@ -62,10 +60,15 @@ private:
     double _mouseOffsetY;
     bool _firstMouse;
 
+    // camera
+    Camera _camera;
+
     std::vector<Shader*> _shaders;
     std::vector<Texture*> _textures;
     std::vector<Material*> _materials;
-    std::vector<Mesh*> _meshes;
+
+    std::vector<Model*> _models;
+
     std::vector<glm::vec3*> _lights;
 
     void initGLFW();
@@ -76,7 +79,7 @@ private:
     void initShaders();
     void initTextures();
     void initMaterials();
-    void initMeshes();
+    void initModels();
     void initLights();
     void initUniforms();
 

@@ -10,6 +10,14 @@
 #include <mat4x4.hpp>
 #include <gtc\matrix_transform.hpp>
 
+enum direction
+{
+    FORWARD = 0,
+    BACKWARD, 
+    LEFT,
+    RIGHT
+};
+
 class Camera
 {
 private:
@@ -30,12 +38,19 @@ private:
 
     void updateCameraVectors()
     {
+        _front.x = cos(glm::radians(_yaw)) * cos(glm::radians(_pitch));
+        _front.y = sin(glm::radians(_pitch));
+        _front.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
 
+        _front = glm::normalize(_front);
+        _right = glm::normalize(glm::cross(_front, _worldUp));
+        _up = glm::normalize(glm::cross(_right, _front));
     }
 
 public:
     Camera(glm::vec3 position, glm::vec3 direction, glm::vec3 worldUp)
         : _position(position), _worldUp(worldUp)
+        , _movementSpeed(3.f), _sensitivity(5.f)
     {
 
     }
@@ -56,19 +71,43 @@ public:
         return _position;
     }
 
-    void updateKeyboardInput(const float& dt, const int direction, const double& offsetX, const double& offsetY)
+    void move(const float& dt, const int direction)
     {
-
+        switch (direction)
+        {
+        case FORWARD:
+            _position += _front * _movementSpeed * dt;
+            break;
+        case BACKWARD:
+            _position -= _front * _movementSpeed * dt;
+            break;
+        case LEFT:
+            _position -= _right * _movementSpeed * dt;
+            break;
+        case RIGHT:
+            _position += _right * _movementSpeed * dt;
+            break;
+        default:
+            break;
+        }
     }
 
     void updateMouseInput(const float& dt, const double& offsetX, const double& offsetY)
     {
+        _pitch += static_cast<GLfloat>(offsetY) * _sensitivity * dt;
+        _yaw += static_cast<GLfloat>(offsetX) * _sensitivity * dt;
 
+        if (_pitch > 80.f)
+            _pitch = 80.f;
+        else if (_pitch < -80.f)
+            _pitch = -80.f;
+
+        if (_yaw > 360.f || _yaw < -360.f)
+            _yaw = 0.f;
     }
 
     void updateInput(const float& dt, const int direction, const double& offsetX, const double& offsetY)
     {
         this->updateMouseInput(dt, offsetX, offsetY);
-        this->updateKeyboardInput(dt, direction, offsetX, offsetY);
     }
 };

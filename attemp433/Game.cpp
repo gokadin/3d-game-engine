@@ -8,14 +8,12 @@ Game::Game(
 )
     : _WINDOW_WIDTH(WINDOW_WIDTH), _WINDOW_HEIGHT(WINDOW_HEIGHT)
     , _GL_VERSION_MAJOR(GL_VERSION_MAJOR), _GL_VERSION_MINOR(GL_VERSION_MINOR)
+    , _camera(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 1.f, 0.f))
 {
     _window = nullptr;
     _frameBufferWidth = WINDOW_WIDTH;
     _frameBufferHeight = WINDOW_HEIGHT;
 
-    _cameraPosition = glm::vec3(0.f, 0.f, 1.f);
-    _worldUp = glm::vec3(0.f, 1.f, 0.f);
-    _cameraFront = glm::vec3(0.f, 0.f, -1.f);
     _fov = 90.f;
     _nearPlane = 0.1f;
     _farPlane = 1000.f;
@@ -40,7 +38,7 @@ Game::Game(
     this->initShaders();
     this->initTextures();
     this->initMaterials();
-    this->initMeshes();
+    this->initModels();
     this->initLights();
     this->initUniforms();
 }
@@ -65,9 +63,9 @@ Game::~Game()
         delete _materials[i];
     }
 
-    for (size_t i = 0; i < _meshes.size(); i++)
+    for (auto*& i : _models)
     {
-        delete _meshes[i];
+        delete i;
     }
 
     for (size_t i = 0; i < _lights.size(); i++)
@@ -134,9 +132,6 @@ void Game::initOpenGLOptions()
 
 void Game::initMatrices()
 {
-    _ViewMatrix = glm::mat4(1.f);
-    _ViewMatrix = glm::lookAt(_cameraPosition, _cameraPosition + _cameraFront, _worldUp);
-
     _ProjectionMatrix = glm::mat4(1.f);
     _ProjectionMatrix = glm::perspective(
         glm::radians(_fov),
@@ -168,14 +163,39 @@ void Game::initMaterials()
     );
 }
 
-void Game::initMeshes()
+void Game::initModels()
 {
-    _meshes.push_back(new Mesh(
+    std::vector<Mesh*> meshes;
+
+    meshes.push_back(new Mesh(
         &Pyramid(),
         glm::vec3(0.f),
         glm::vec3(0.f), 
         glm::vec3(1.f)
     ));
+
+    _models.push_back(new Model(
+        glm::vec3(0.f),
+        _materials[0],
+        _textures[0],
+        _textures[1],
+        meshes
+    ));
+
+    _models.push_back(new Model(
+        glm::vec3(1.f, 0.f, 0.f),
+        _materials[0],
+        _textures[2],
+        _textures[3],
+        meshes
+    ));
+
+    for (auto*& i : meshes)
+    {
+        delete i;
+    }
+
+    meshes.clear();
 }
 
 void Game::initLights()
@@ -185,7 +205,7 @@ void Game::initLights()
 
 void Game::initUniforms()
 {
-    _shaders[SHADER_CORE_PROGRAM]->setMat4fv(_ViewMatrix, "ViewMatrix");
+    _shaders[SHADER_CORE_PROGRAM]->setMat4fv(_camera.getViewMatrix(), "ViewMatrix");
     _shaders[SHADER_CORE_PROGRAM]->setMat4fv(_ProjectionMatrix, "ProjectionMatrix");
 
     _shaders[SHADER_CORE_PROGRAM]->setVec3f(*_lights[0], "lightPos0");
@@ -193,9 +213,8 @@ void Game::initUniforms()
 
 void Game::updateUniforms()
 {
-    _ViewMatrix = glm::lookAt(_cameraPosition, _cameraPosition + _cameraFront, _worldUp);
-    _shaders[SHADER_CORE_PROGRAM]->setMat4fv(_ViewMatrix, "ViewMatrix");
-    _shaders[SHADER_CORE_PROGRAM]->setVec3f(_cameraPosition, "cameraPos");
+    _shaders[SHADER_CORE_PROGRAM]->setMat4fv(_camera.getViewMatrix(), "ViewMatrix");
+    _shaders[SHADER_CORE_PROGRAM]->setVec3f(_camera.getPosition(), "cameraPos");
 
     glfwGetFramebufferSize(_window, &_frameBufferWidth, &_frameBufferHeight);
 
@@ -229,31 +248,24 @@ void Game::updateKeyboardInput()
 {
     if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
-        this->setWindowShouldClose();
+        glfwSetWindowShouldClose(_window, GLFW_TRUE);
     }
+
     if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        _cameraPosition.z -= 0.05f;
+        _camera.move(_dt, FORWARD);
     }
     if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        _cameraPosition.z += 0.05f;
+        _camera.move(_dt, BACKWARD);
     }
     if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        _cameraPosition.x -= 0.05f;
+        _camera.move(_dt, LEFT);
     }
     if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        _cameraPosition.x += 0.05f;
-    }
-    if (glfwGetKey(_window, GLFW_KEY_C) == GLFW_PRESS)
-    {
-        _cameraPosition.y -= 0.05f;
-    }
-    if (glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS)
-    {
-        _cameraPosition.y += 0.05f;
+        _camera.move(_dt, RIGHT);
     }
 }
 
@@ -281,6 +293,7 @@ void Game::updateInput()
 
     this->updateKeyboardInput();
     this->updateMouseInput();
+    _camera.updateInput(_dt, 1, _mouseOffsetX, _mouseOffsetY);
 }
 
 void Game::update()
@@ -288,7 +301,7 @@ void Game::update()
     this->updateDt();
     this->updateInput();
 
-    _meshes[0]->rotate(glm::vec3(0.f, 1.f, 0.f));
+    _models[0]->rotate(glm::vec3(0.f, 3.f, 0.f));
 }
 
 void Game::render()
@@ -298,14 +311,10 @@ void Game::render()
 
     this->updateUniforms();
 
-    _materials[MATERIAL_1]->sendToShader(*_shaders[SHADER_CORE_PROGRAM]);
-
-    _shaders[SHADER_CORE_PROGRAM]->use();
-
-    _textures[TEXTURE_BRICK]->bind(0);
-    _textures[TEXTURE_BRICK_SPECULAR]->bind(1);
-
-    _meshes[0]->render(_shaders[SHADER_CORE_PROGRAM]);
+    for (auto& i : _models)
+    {
+        i->render(_shaders[SHADER_CORE_PROGRAM]);
+    }
 
     glfwSwapBuffers(_window);
     glFlush();
