@@ -167,12 +167,12 @@ void Game::initModels()
 {
     std::vector<Mesh*> meshes;
 
-    meshes.push_back(new Mesh(
-        &Pyramid(),
-        glm::vec3(0.f),
-        glm::vec3(0.f), 
-        glm::vec3(1.f)
-    ));
+    //meshes.push_back(new Mesh(
+    //    &Pyramid(),
+    //    glm::vec3(0.f),
+    //    glm::vec3(0.f), 
+    //    glm::vec3(1.f)
+    //));
 
     _models.push_back(new Model(
         glm::vec3(0.f),

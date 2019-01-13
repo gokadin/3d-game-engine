@@ -8,14 +8,20 @@
 #include "Texture.h"
 #include "Material.h"
 #include "Primitives.h"
+#include "ObjLoader.h"
 
 class Mesh
 {
 private:
+    ObjLoader _objLoader;
     Vertex* _vertexArray;
     unsigned _numberOfVertices;
     GLuint* _indexArray;
     unsigned _numberOfIndices;
+
+    std::vector<glm::vec3> _positions;
+    std::vector<glm::vec2> _texcoords;
+    std::vector<glm::vec3> _normals;
 
     GLuint _VAO;
     GLuint _VBO;
@@ -42,20 +48,16 @@ private:
 
         // input assembly (how we tell the shader what each float is in our buffer)
         // position
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
         glEnableVertexAttribArray(0);
 
-        // color
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
+        // texcoord
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
         glEnableVertexAttribArray(1);
 
-        // texcoord
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texcoord));
-        glEnableVertexAttribArray(2);
-
         // normal
-        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
-        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+        glEnableVertexAttribArray(2);
 
         glBindVertexArray(0);
     }
@@ -77,10 +79,7 @@ private:
 
 public:
     Mesh(
-        Vertex* vertexArray,
-        const unsigned& numberOfVertices,
-        GLuint* indexArray,
-        const unsigned& numberOfIndices,
+        std::string filename,
         glm::vec3 position = glm::vec3(0.f),
         glm::vec3 rotation = glm::vec3(0.f),
         glm::vec3 scale = glm::vec3(1.f)
@@ -89,53 +88,71 @@ public:
         , _rotation(rotation)
         , _scale(scale)
     {
-        _numberOfVertices = numberOfVertices;
-        _numberOfIndices = numberOfIndices;
+        _objLoader.load(filename);
 
-        _vertexArray = new Vertex[_numberOfVertices];
-        for (size_t i = 0; i < numberOfVertices; i++)
-        {
-            _vertexArray[i] = vertexArray[i];
-        }
-
-        _indexArray = new GLuint[_numberOfIndices];
-        for (size_t i = 0; i < numberOfIndices; i++)
-        {
-            _indexArray[i] = indexArray[i];
-        }
-
-        this->initVAO();
-        this->updateModelMatrix();
+        // something something
     }
+
+    //Mesh(
+    //    Vertex* vertexArray,
+    //    const unsigned& numberOfVertices,
+    //    GLuint* indexArray,
+    //    const unsigned& numberOfIndices,
+    //    glm::vec3 position = glm::vec3(0.f),
+    //    glm::vec3 rotation = glm::vec3(0.f),
+    //    glm::vec3 scale = glm::vec3(1.f)
+    //)
+    //    : _position(position)
+    //    , _rotation(rotation)
+    //    , _scale(scale)
+    //{
+    //    _numberOfVertices = numberOfVertices;
+    //    _numberOfIndices = numberOfIndices;
+
+    //    _vertexArray = new Vertex[_numberOfVertices];
+    //    for (size_t i = 0; i < numberOfVertices; i++)
+    //    {
+    //        _vertexArray[i] = vertexArray[i];
+    //    }
+
+    //    _indexArray = new GLuint[_numberOfIndices];
+    //    for (size_t i = 0; i < numberOfIndices; i++)
+    //    {
+    //        _indexArray[i] = indexArray[i];
+    //    }
+
+    //    this->initVAO();
+    //    this->updateModelMatrix();
+    //}
     
-    Mesh(
-        Primitive *primitive,
-        glm::vec3 position = glm::vec3(0.f),
-        glm::vec3 rotation = glm::vec3(0.f),
-        glm::vec3 scale = glm::vec3(1.f)
-    )
-        : _position(position)
-        , _rotation(rotation)
-        , _scale(scale)
-    {
-        _numberOfVertices = primitive->getNumberOfVertices();
-        _numberOfIndices = primitive->getNumberOfIndices();
+    //Mesh(
+    //    Primitive *primitive,
+    //    glm::vec3 position = glm::vec3(0.f),
+    //    glm::vec3 rotation = glm::vec3(0.f),
+    //    glm::vec3 scale = glm::vec3(1.f)
+    //)
+    //    : _position(position)
+    //    , _rotation(rotation)
+    //    , _scale(scale)
+    //{
+    //    _numberOfVertices = primitive->getNumberOfVertices();
+    //    _numberOfIndices = primitive->getNumberOfIndices();
 
-        _vertexArray = new Vertex[_numberOfVertices];
-        for (size_t i = 0; i < primitive->getNumberOfVertices(); i++)
-        {
-            _vertexArray[i] = primitive->getVertices()[i];
-        }
+    //    _vertexArray = new Vertex[_numberOfVertices];
+    //    for (size_t i = 0; i < primitive->getNumberOfVertices(); i++)
+    //    {
+    //        _vertexArray[i] = primitive->getVertices()[i];
+    //    }
 
-        _indexArray = new GLuint[_numberOfIndices];
-        for (size_t i = 0; i < primitive->getNumberOfIndices(); i++)
-        {
-            _indexArray[i] = primitive->getIndices()[i];
-        }
+    //    _indexArray = new GLuint[_numberOfIndices];
+    //    for (size_t i = 0; i < primitive->getNumberOfIndices(); i++)
+    //    {
+    //        _indexArray[i] = primitive->getIndices()[i];
+    //    }
 
-        this->initVAO();
-        this->updateModelMatrix();
-    }
+    //    this->initVAO();
+    //    this->updateModelMatrix();
+    //}
 
     Mesh(const Mesh& other)
     {
@@ -146,11 +163,11 @@ public:
         _numberOfVertices = other._numberOfVertices;
         _numberOfIndices = other._numberOfIndices;
 
-        _vertexArray = new Vertex[_numberOfVertices];
-        for (size_t i = 0; i < _numberOfVertices; i++)
-        {
-            _vertexArray[i] = other._vertexArray[i];
-        }
+        //_vertexArray = new Vertex[_numberOfVertices];
+        //for (size_t i = 0; i < _numberOfVertices; i++)
+        //{
+        //    _vertexArray[i] = other._vertexArray[i];
+        //}
 
         _indexArray = new GLuint[_numberOfIndices];
         for (size_t i = 0; i < _numberOfIndices; i++)
