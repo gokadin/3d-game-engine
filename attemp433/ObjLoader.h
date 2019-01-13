@@ -35,7 +35,7 @@ private:
             this->parseTexcoordsLine(line);
         }
 
-        if (line.substr(0, 2) == "f")
+        if (line.substr(0, 2) == "f ")
         {
             this->parseVertexLine(line);
         }
@@ -83,19 +83,34 @@ private:
     {
         std::string data = line.substr(2);
         std::istringstream iss(data);
+        
+        std::string indicesStr1, indicesStr2, indicesStr3;
+        iss >> indicesStr1;
+        iss >> indicesStr2;
+        iss >> indicesStr3;
 
-        unsigned int positionIndex;
-        unsigned int texcoordIndex;
-        unsigned int normalIndex;
-        iss >> positionIndex;
-        iss >> texcoordIndex;
-        iss >> normalIndex;
+        this->addVertexFromIndicesString(indicesStr1);
+        this->addVertexFromIndicesString(indicesStr2);
+        this->addVertexFromIndicesString(indicesStr3);
+    }
 
-        _vertices.push_back(Vertex(
-            _positions.at(positionIndex),
-            _texcoords.at(texcoordIndex),
-            _normals.at(normalIndex)
-        ));
+    void addVertexFromIndicesString(std::string& indicesStr)
+    {
+        std::string token;
+        std::vector<std::string> split;
+        std::istringstream iss(indicesStr);
+        while (std::getline(iss, token, '/'))
+        {
+            split.push_back(token);
+        }
+
+        if (split.size() != 3)
+        {
+            std::cout << "error::ObjLoader::addVertexFromIndicesString::invalid_indices_string: " << indicesStr << std::endl;
+            return;
+        }
+
+        _vertices.push_back(Vertex{_positions[stoi(split[0]) - 1], _texcoords[stoi(split[1]) - 1], _normals[stoi(split[2]) - 1]});
     }
 
 public:
@@ -123,22 +138,18 @@ public:
         file.close();
     }
 
+    inline Vertex* getVertices() { return _vertices.data(); }
+
+    inline unsigned int getNumberOfVertices() { return _vertices.size(); }
+
     void print()
     {
         for (size_t i = 0; i < _vertices.size(); i++)
         {
             std::cout 
-                << "pos: " << _vertices[i].getPosition().x << " " << _vertices[i].getPosition().y << " " << _vertices[i].getPosition().z 
-                << " tex: " << _vertices[i].getTexcoord().x << " " << _vertices[i].getTexcoord().y
-                << " normal: " << _vertices[i].getNormal().x << " " << _vertices[i].getNormal().y << " " << _vertices[i].getNormal().z
-                << std::endl;
-        }
-        for (auto& i : _vertices)
-        {
-            std::cout 
-                << "pos: " << i.getPosition().x << " " << i.getPosition().y << " " << i.getPosition().z 
-                << " tex: " << i.getTexcoord().x << " " << i.getTexcoord().y
-                << " normal: " << i.getNormal().x << " " << i.getNormal().y << " " << i.getNormal().z
+                << "pos: " << _vertices[i].position.x << " " << _vertices[i].position.y << " " << _vertices[i].position.z 
+                << " tex: " << _vertices[i].texcoord.x << " " << _vertices[i].texcoord.y
+                << " normal: " << _vertices[i].normal.x << " " << _vertices[i].normal.y << " " << _vertices[i].normal.z
                 << std::endl;
         }
     }

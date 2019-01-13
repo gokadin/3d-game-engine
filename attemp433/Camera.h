@@ -94,7 +94,7 @@ public:
 
     void updateMouseInput(const float& dt, const double& offsetX, const double& offsetY)
     {
-        _pitch += static_cast<GLfloat>(offsetY) * _sensitivity * dt;
+        _pitch -= static_cast<GLfloat>(offsetY) * _sensitivity * dt;
         _yaw += static_cast<GLfloat>(offsetX) * _sensitivity * dt;
 
         if (_pitch > 80.f)

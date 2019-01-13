@@ -14,7 +14,7 @@ Game::Game(
     _frameBufferWidth = WINDOW_WIDTH;
     _frameBufferHeight = WINDOW_HEIGHT;
 
-    _fov = 90.f;
+    _fov = 60.f;
     _nearPlane = 0.1f;
     _farPlane = 1000.f;
 
@@ -167,23 +167,10 @@ void Game::initModels()
 {
     std::vector<Mesh*> meshes;
 
-    //meshes.push_back(new Mesh(
-    //    &Pyramid(),
-    //    glm::vec3(0.f),
-    //    glm::vec3(0.f), 
-    //    glm::vec3(1.f)
-    //));
+    meshes.push_back(new Mesh("images/cube.obj"));
 
     _models.push_back(new Model(
         glm::vec3(0.f),
-        _materials[0],
-        _textures[0],
-        _textures[1],
-        meshes
-    ));
-
-    _models.push_back(new Model(
-        glm::vec3(1.f, 0.f, 0.f),
         _materials[0],
         _textures[2],
         _textures[3],
@@ -301,7 +288,7 @@ void Game::update()
     this->updateDt();
     this->updateInput();
 
-    _models[0]->rotate(glm::vec3(0.f, 3.f, 0.f));
+    _models[0]->rotate(glm::vec3(0.f, 1.f, 0.f));
 }
 
 void Game::render()

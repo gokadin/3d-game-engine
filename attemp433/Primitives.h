@@ -55,24 +55,28 @@ public:
         Vertex vertices[] =
         {
             // triangle front
-            Vertex(glm::vec3(0.f, 0.5f, 0.f), glm::vec2(0.5f, 1.f), glm::vec3(0.f, 0.f, 1.f)),
-            Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec2(0.f, 0.f), glm::vec3(0.f, 0.f, 1.f)),
-            Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec2(1.f, 0.f), glm::vec3(0.f, 0.f, 1.f)),
+            // position                     // color                    // texture              // normal
+            glm::vec3(0.f, 0.5f, 0.f),     glm::vec2(0.5f, 1.f),  glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-0.5f, -0.5f, 0.5f),    glm::vec2(0.f, 0.f),   glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(0.5f, -0.5f, 0.5f),   glm::vec2(1.f, 0.f),    glm::vec3(0.f, 0.f, 1.f),
 
             // triangle left
-            Vertex(glm::vec3(0.f, 0.5f, 0.f), glm::vec2(0.5f, 1.f), glm::vec3(1.f, 0.f, 0.f)),
-            Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec2(0.f, 0.f), glm::vec3(1.f, 0.f, 0.f)),
-            Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec2(1.f, 0.f), glm::vec3(1.f, 0.f, 0.f)),
+            // position                     // color                    // texture              // normal
+            glm::vec3(0.f, 0.5f, 0.f),    glm::vec2(0.5f, 1.f),  glm::vec3(-1.f, 0.f, 0.f),
+            glm::vec3(-0.5f, -0.5f, -0.5f),    glm::vec2(0.f, 0.f),   glm::vec3(-1.f, 0.f, 0.f),
+            glm::vec3(-0.5f, -0.5f, 0.5f),    glm::vec2(1.f, 0.f),    glm::vec3(-1.f, 0.f, 0.f),
 
             // triangle back
-            Vertex(glm::vec3(0.f, 0.5f, 0.f), glm::vec2(0.5f, 1.f), glm::vec3(0.f, 0.f, -1.f)),
-            Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec2(0.f, 0.f), glm::vec3(0.f, 0.f, -1.f)),
-            Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec2(1.f, 0.f), glm::vec3(0.f, 0.f, -1.f)),
+            // position                     // color                    // texture              // normal
+            glm::vec3(0.f, 0.5f, 0.f),   glm::vec2(0.5f, 1.f),  glm::vec3(0.f, 0.f, -1.f),
+            glm::vec3(0.5f, -0.5f, -0.5f),    glm::vec2(0.f, 0.f),   glm::vec3(0.f, 0.f, -1.f),
+            glm::vec3(-0.5f, -0.5f, -0.5f),   glm::vec2(1.f, 0.f),    glm::vec3(0.f, 0.f, -1.f),
 
             // triangle right
-            Vertex(glm::vec3(0.f, 0.5f, 0.f), glm::vec2(0.5f, 1.f), glm::vec3(1.f, 0.f, 0.f)),
-            Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec2(0.f, 0.f), glm::vec3(1.f, 0.f, 0.f)),
-            Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec2(1.f, 0.f), glm::vec3(1.f, 0.f, 0.f)),
+            // position                     // color                    // texture              // normal
+            glm::vec3(0.f, 0.5f, 0.f),   glm::vec2(0.5f, 1.f),  glm::vec3(1.f, 0.f, 0.f),
+            glm::vec3(0.5f, -0.5f, 0.5f),   glm::vec2(0.f, 0.f),   glm::vec3(1.f, 0.f, 0.f),
+            glm::vec3(0.5f, -0.5f, -0.5f),   glm::vec2(1.f, 0.f),    glm::vec3(1.f, 0.f, 0.f),
         };
         unsigned int numberOfVertices = sizeof(vertices) / sizeof(Vertex);
 

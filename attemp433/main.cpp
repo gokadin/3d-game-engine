@@ -4,21 +4,19 @@
 
 int main()
 {
-    //Game game("attempt443", 1920, 1080, 4, 5, false);
+    Game game("attempt443", 1920, 1080, 4, 5, false);
 
-    //while (!game.getWindowShouldClose())
-    //{
-    //    game.update();
-    //    game.render();
-    //}
+    while (!game.getWindowShouldClose())
+    {
+        game.update();
+        game.render();
+    }
 
-    ObjLoader loader;
+    //ObjLoader loader;
 
-    loader.load("images/cube.obj");
+    //loader.load("images/cube.obj");
 
-    loader.print();
-
-    system("PAUSE");
+    //system("PAUSE");
 
     return 0;
 }
