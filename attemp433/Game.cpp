@@ -36,8 +36,6 @@ Game::Game(
     this->initOpenGLOptions();
     this->initMatrices();
     this->initShaders();
-    this->initTextures();
-    this->initMaterials();
     this->initModels();
     this->initLights();
     this->initUniforms();
@@ -51,16 +49,6 @@ Game::~Game()
     for (size_t i = 0; i < _shaders.size(); i++)
     {
         delete _shaders[i];
-    }
-
-    for (size_t i = 0; i < _textures.size(); i++)
-    {
-        delete _textures[i];
-    }
-
-    for (size_t i = 0; i < _materials.size(); i++)
-    {
-        delete _materials[i];
     }
 
     for (auto*& i : _models)
@@ -146,34 +134,14 @@ void Game::initShaders()
     _shaders.push_back(new Shader(_GL_VERSION_MAJOR, _GL_VERSION_MINOR, "vertex_core.glsl", "fragment_core.glsl"));
 }
 
-void Game::initTextures()
-{
-    _textures.push_back(new Texture("images/test.png", GL_TEXTURE_2D));
-    _textures.push_back(new Texture("images/test_specular.png", GL_TEXTURE_2D));
-
-    _textures.push_back(new Texture("images/brick.png", GL_TEXTURE_2D));
-    _textures.push_back(new Texture("images/brick_specular.png", GL_TEXTURE_2D));
-}
-
-void Game::initMaterials()
-{
-    _materials.push_back(new Material (
-        glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f),
-        0, 1)
-    );
-}
-
 void Game::initModels()
 {
     std::vector<Mesh*> meshes;
 
-    meshes.push_back(new Mesh("images/cube.obj"));
+    meshes.push_back(new Mesh("images/floor.obj"));
 
-    _models.push_back(new Model(
+    _models.push_back(new Model2(
         glm::vec3(0.f),
-        _materials[0],
-        _textures[2],
-        _textures[3],
         meshes
     ));
 
@@ -187,7 +155,7 @@ void Game::initModels()
 
 void Game::initLights()
 {
-    _lights.push_back(new glm::vec3(0.f, 0.f, 1.f));
+    _lights.push_back(new glm::vec3(0.f, 4.f, -2.f));
 }
 
 void Game::initUniforms()
@@ -287,8 +255,6 @@ void Game::update()
 {
     this->updateDt();
     this->updateInput();
-
-    _models[0]->rotate(glm::vec3(0.f, 1.f, 0.f));
 }
 
 void Game::render()
@@ -305,11 +271,6 @@ void Game::render()
 
     glfwSwapBuffers(_window);
     glFlush();
-
-    glBindVertexArray(0);
-    _shaders[SHADER_CORE_PROGRAM]->unuse();
-    glActiveTexture(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Game::frameBufferResizeCallback(GLFWwindow * window, int fbW, int fbH)

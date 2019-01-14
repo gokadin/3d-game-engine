@@ -12,11 +12,5 @@ int main()
         game.render();
     }
 
-    //ObjLoader loader;
-
-    //loader.load("images/cube.obj");
-
-    //system("PAUSE");
-
     return 0;
 }

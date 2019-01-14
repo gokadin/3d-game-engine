@@ -17,10 +17,10 @@ private:
     unsigned int type;
 
 public:
-    Texture(const char* filename, GLenum type)
+    Texture(std::string filename, GLenum type)
         : type(type)
     {
-        unsigned char* image = SOIL_load_image(filename, &this->width, &this->height, NULL, SOIL_LOAD_RGBA);
+        unsigned char* image = SOIL_load_image(filename.c_str(), &this->width, &this->height, NULL, SOIL_LOAD_RGBA);
 
         glGenTextures(1, &this->id);
         glBindTexture(this->type, this->id);

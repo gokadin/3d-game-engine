@@ -64,10 +64,8 @@ private:
     Camera _camera;
 
     std::vector<Shader*> _shaders;
-    std::vector<Texture*> _textures;
-    std::vector<Material*> _materials;
 
-    std::vector<Model*> _models;
+    std::vector<Model2*> _models;
 
     std::vector<glm::vec3*> _lights;
 
@@ -77,8 +75,6 @@ private:
     void initOpenGLOptions();
     void initMatrices();
     void initShaders();
-    void initTextures();
-    void initMaterials();
     void initModels();
     void initLights();
     void initUniforms();

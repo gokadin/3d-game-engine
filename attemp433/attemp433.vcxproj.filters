@@ -13,54 +13,99 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\utils">
+    <Filter Include="Source Files\engine">
+      <UniqueIdentifier>{18642966-da9e-4fed-925d-db1ef3e8e6db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\engine\character">
+      <UniqueIdentifier>{085577c5-3e4c-44ba-9ab6-f72a2f33fad8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\engine\core">
+      <UniqueIdentifier>{9a0e7fb0-c9cc-4a5e-8a74-1e7dfb7ecea4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\engine\world">
+      <UniqueIdentifier>{769b4278-c7b6-4e2e-900b-5603c73e9410}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game">
+      <UniqueIdentifier>{817f3836-4bea-4da8-adcb-ce1160e7a7df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\engine">
+      <UniqueIdentifier>{bf4e88b6-3ab8-4b68-99f7-eb00fa6912de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\game">
+      <UniqueIdentifier>{d1a30cd6-5bf6-4909-a3a6-7f63dbb0128c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\engine\character">
+      <UniqueIdentifier>{fd2fb221-d9fe-4c2d-96a9-17df861654fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\engine\core">
+      <UniqueIdentifier>{9e407d15-d9a7-42f3-814d-b3ee1ca74705}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\engine\core\model">
+      <UniqueIdentifier>{5685a53b-2173-46b5-97b7-8b9d05fbc56b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\engine\utils">
       <UniqueIdentifier>{56604fbd-d007-4801-ba18-1fb2c55ed931}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\utils\loaders">
+    <Filter Include="Header Files\engine\utils\loaders">
       <UniqueIdentifier>{640e5ebf-8373-43f7-81c6-25a9029aabd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\engine\core\model">
+      <UniqueIdentifier>{c510c751-e7fb-4ab3-8583-a96f138c415d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>Source Files\engine\character</Filter>
+    </ClCompile>
     <ClCompile Include="Game.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\engine\core</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files\engine\core\model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="libs.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="ObjLoader.h">
+      <Filter>Header Files\engine\utils\loaders</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Character.h">
+      <Filter>Header Files\engine\character</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Primitives.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\engine\core</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\engine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\engine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Primitives.h">
+      <Filter>Header Files\engine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files\engine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\engine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Header Files\engine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Model2.h">
+      <Filter>Header Files\engine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files\engine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="libs.h">
+      <Filter>Header Files\engine\core</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjLoader.h">
-      <Filter>Header Files\utils\loaders</Filter>
+      <Filter>Header Files\engine\core\model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

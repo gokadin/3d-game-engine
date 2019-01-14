@@ -28,6 +28,8 @@ private:
     glm::vec3 _rotation;
     glm::vec3 _scale;
 
+    std::vector<Material*> _materials;
+
     glm::mat4 _ModelMatrix;
 
     void initVAO()
@@ -59,6 +61,15 @@ private:
         glBindVertexArray(0);
     }
 
+    void initMaterials()
+    {
+        _materials.push_back(new Material (
+            glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f))
+        );
+        _materials[0]->add2DTexture("images/brick.png", GL_TEXTURE_2D);
+        _materials[0]->add2DTexture("images/brick_specular.png", GL_TEXTURE_2D);
+    }
+
     void updateUniforms(Shader* shader)
     {
         shader->setMat4fv(this->_ModelMatrix, "ModelMatrix");
@@ -86,7 +97,6 @@ public:
         , _scale(scale)
     {
         _objLoader.load(filename);
-        _objLoader.print();
 
         _numberOfVertices = _objLoader.getNumberOfVertices();
 
@@ -98,42 +108,11 @@ public:
 
         _numberOfIndices = 0;
 
+        this->initMaterials();
         this->initVAO();
         this->updateModelMatrix();
     }
 
-    Mesh(
-        Vertex* vertexArray,
-        const unsigned& numberOfVertices,
-        GLuint* indexArray,
-        const unsigned& numberOfIndices,
-        glm::vec3 position = glm::vec3(0.f),
-        glm::vec3 rotation = glm::vec3(0.f),
-        glm::vec3 scale = glm::vec3(1.f)
-    )
-        : _position(position)
-        , _rotation(rotation)
-        , _scale(scale)
-    {
-        _numberOfVertices = numberOfVertices;
-        _numberOfIndices = numberOfIndices;
-
-        _vertexArray = new Vertex[_numberOfVertices];
-        for (size_t i = 0; i < numberOfVertices; i++)
-        {
-            _vertexArray[i] = vertexArray[i];
-        }
-
-        _indexArray = new GLuint[_numberOfIndices];
-        for (size_t i = 0; i < numberOfIndices; i++)
-        {
-            _indexArray[i] = indexArray[i];
-        }
-
-        this->initVAO();
-        this->updateModelMatrix();
-    }
-    
     Mesh(
         Primitive *primitive,
         glm::vec3 position = glm::vec3(0.f),
@@ -159,6 +138,7 @@ public:
             _indexArray[i] = primitive->getIndices()[i];
         }
 
+        this->initMaterials();
         this->initVAO();
         this->updateModelMatrix();
     }
@@ -184,6 +164,7 @@ public:
             _indexArray[i] = other._indexArray[i];
         }
 
+        this->initMaterials();
         this->initVAO();
         this->updateModelMatrix();
     }
@@ -200,6 +181,11 @@ public:
 
         delete[] _vertexArray;
         delete[] _indexArray;
+
+        for (size_t i = 0; i < _materials.size(); i++)
+        {
+            delete _materials[i];
+        }
     }
 
     void setPosition(const glm::vec3 position) { this->_position = position; }
@@ -233,6 +219,8 @@ public:
         this->updateModelMatrix();
         this->updateUniforms(shader);
 
+        _materials[0]->bind(*shader);
+
         shader->use();
 
         glBindVertexArray(this->_VAO);
@@ -246,10 +234,9 @@ public:
             glDrawElements(GL_TRIANGLES, this->_numberOfIndices, GL_UNSIGNED_INT, 0);
         }
 
+        _materials[0]->unbind();
         glBindVertexArray(0);
         glUseProgram(0);
-        glActiveTexture(0);
-        glBindTexture(GL_TEXTURE_2D, 0);
     }
 };
 
