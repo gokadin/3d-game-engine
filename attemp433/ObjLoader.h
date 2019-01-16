@@ -4,22 +4,69 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <map>
 
 #include <glm.hpp>
 
 #include "Vertex.h"
+#include "Mesh.h"
+#include "MeshMaterial.h"
+#include "MaterialParser.h"
+#include "SubMesh.h"
 
 class ObjLoader
 {
 private:
+    std::string _objFilename;
+
+    MaterialParser _materialParser;
+
     std::vector<glm::vec3> _positions;
     std::vector<glm::vec2> _texcoords;
     std::vector<glm::vec3> _normals;
-    std::vector<unsigned int> _indices;
     std::vector<Vertex> _vertices;
+
+    std::map<std::string, MeshMaterial*> _materials;
+    std::map<std::string, Mesh*> _meshes;
+
+    bool wasLastLineVertex;
+    std::string _currentMeshName;
+    std::string _currentMaterialName;
 
     void parseLine(std::string& line)
     {
+        if (line.substr(0, 2) == "f ")
+        {
+            wasLastLineVertex = true;
+            this->parseVertexLine(line);
+        }
+        else
+        {
+            if (wasLastLineVertex)
+            {
+                // end of vertex group
+
+                _meshes[_currentMeshName]->addSubMesh(new SubMesh(
+                    _materials[_currentMaterialName], 
+                    _vertices
+                    ));
+
+                _vertices.clear();
+            }
+
+            wasLastLineVertex = false;
+        }
+
+        if (line.substr(0, 7) == "mtllib ")
+        {
+            this->parseMaterialLine(line);
+        }
+
+        if (line.substr(0, 7) == "usemtl ")
+        {
+            this->parseUseMaterialLine(line);
+        }
+
         if (line.substr(0, 2) == "v ")
         {
             this->parsePositionLine(line);
@@ -35,10 +82,24 @@ private:
             this->parseTexcoordsLine(line);
         }
 
-        if (line.substr(0, 2) == "f ")
+        if (line.substr(0, 2) == "g ")
         {
-            this->parseVertexLine(line);
+            this->parseObjectNameLine(line);
         }
+    }
+
+    void parseMaterialLine(std::string& line)
+    {
+        std::string data = line.substr(7);
+        std::string path = _objFilename.substr(0, _objFilename.rfind("/") + 1);
+        std::string materialFilename = path + data;
+
+        _materials = _materialParser.parse(materialFilename);
+    }
+
+    void parseUseMaterialLine(std::string& line)
+    {
+        _currentMaterialName = line.substr(7);
     }
 
     void parsePositionLine(std::string& line)
@@ -79,6 +140,18 @@ private:
         _texcoords.push_back(texcoord);
     }
 
+    void parseObjectNameLine(std::string& line)
+    {
+        std::string data = line.substr(2);
+        std::istringstream iss(data);
+
+        std::string name;
+        iss >> name;
+
+        _currentMeshName = name;
+        _meshes[_currentMeshName] = new Mesh();
+    }
+
     void parseVertexLine(std::string& line)
     {
         std::string data = line.substr(2);
@@ -114,9 +187,11 @@ private:
     }
 
 public:
-    void load(std::string filename)
+    std::map<std::string, Mesh*> load(std::string filename)
     {
         std::cout << "loading " << filename << std::endl;
+
+        _objFilename = filename;
 
         std::ifstream file;
         file.open(filename);
@@ -136,6 +211,8 @@ public:
         }
 
         file.close();
+
+        return _meshes;
     }
 
     inline Vertex* getVertices() { return _vertices.data(); }

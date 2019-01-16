@@ -40,17 +40,11 @@
     <Filter Include="Header Files\engine\core">
       <UniqueIdentifier>{9e407d15-d9a7-42f3-814d-b3ee1ca74705}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\engine\core\model">
-      <UniqueIdentifier>{5685a53b-2173-46b5-97b7-8b9d05fbc56b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\engine\utils">
       <UniqueIdentifier>{56604fbd-d007-4801-ba18-1fb2c55ed931}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\engine\utils\loaders">
       <UniqueIdentifier>{640e5ebf-8373-43f7-81c6-25a9029aabd0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\engine\core\model">
-      <UniqueIdentifier>{c510c751-e7fb-4ab3-8583-a96f138c415d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -63,9 +57,6 @@
     <ClCompile Include="Game.cpp">
       <Filter>Source Files\engine\core</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files\engine\core\model</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjLoader.h">
@@ -73,9 +64,6 @@
     </ClInclude>
     <ClInclude Include="Character.h">
       <Filter>Header Files\engine\character</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Header Files\engine\core</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\engine\core</Filter>
@@ -95,9 +83,6 @@
     <ClInclude Include="Vertex.h">
       <Filter>Header Files\engine\core</Filter>
     </ClInclude>
-    <ClInclude Include="Model2.h">
-      <Filter>Header Files\engine\core</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Header Files\engine\core</Filter>
     </ClInclude>
@@ -105,7 +90,16 @@
       <Filter>Header Files\engine\core</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
-      <Filter>Header Files\engine\core\model</Filter>
+      <Filter>Header Files\engine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshMaterial.h">
+      <Filter>Header Files\engine\utils\loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialParser.h">
+      <Filter>Header Files\engine\utils\loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="SubMesh.h">
+      <Filter>Header Files\engine\core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

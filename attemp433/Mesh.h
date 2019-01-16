@@ -3,72 +3,19 @@
 #include <iostream>
 #include <vector>
 
-#include "Vertex.h"
 #include "Shader.h"
-#include "Texture.h"
-#include "Material.h"
-#include "Primitives.h"
-#include "ObjLoader.h"
+#include "SubMesh.h"
 
 class Mesh
 {
 private:
-    ObjLoader _objLoader;
-
-    Vertex* _vertexArray;
-    unsigned _numberOfVertices;
-    GLuint* _indexArray;
-    unsigned _numberOfIndices;
-
-    GLuint _VAO;
-    GLuint _VBO;
-    GLuint _EBO;
-
     glm::vec3 _position;
     glm::vec3 _rotation;
     glm::vec3 _scale;
 
-    std::vector<Material*> _materials;
+    std::vector<SubMesh*> _subMeshes;
 
     glm::mat4 _ModelMatrix;
-
-    void initVAO()
-    {
-        glCreateVertexArrays(1, &this->_VAO);
-        glBindVertexArray(this->_VAO);
-
-        glGenBuffers(1, &this->_VBO);
-        glBindBuffer(GL_ARRAY_BUFFER, this->_VBO);
-        glBufferData(GL_ARRAY_BUFFER, this->_numberOfVertices * sizeof(Vertex), _vertexArray, GL_STATIC_DRAW); // GL_STATIC_DRAW if not changing much ortherwise GL_DYNAMIC_DRAW
-
-        glGenBuffers(1, &this->_EBO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->_EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->_numberOfIndices * sizeof(GLuint), _indexArray, GL_STATIC_DRAW);
-
-        // input assembly (how we tell the shader what each float is in our buffer)
-        // position
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
-        glEnableVertexAttribArray(0);
-
-        // texcoord
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texcoord));
-        glEnableVertexAttribArray(1);
-
-        // normal
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
-        glEnableVertexAttribArray(2);
-
-        glBindVertexArray(0);
-    }
-
-    void initMaterials()
-    {
-        _materials.push_back(new Material (
-            glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f))
-        );
-        _materials[0]->add2DTexture("images/brick.png", GL_TEXTURE_2D);
-        _materials[0]->add2DTexture("images/brick_specular.png", GL_TEXTURE_2D);
-    }
 
     void updateUniforms(Shader* shader)
     {
@@ -87,7 +34,6 @@ private:
 
 public:
      Mesh(
-        std::string filename,
         glm::vec3 position = glm::vec3(0.f),
         glm::vec3 rotation = glm::vec3(0.f),
         glm::vec3 scale = glm::vec3(1.f)
@@ -96,96 +42,21 @@ public:
         , _rotation(rotation)
         , _scale(scale)
     {
-        _objLoader.load(filename);
-
-        _numberOfVertices = _objLoader.getNumberOfVertices();
-
-        _vertexArray = new Vertex[_numberOfVertices];
-        for (size_t i = 0; i < _objLoader.getNumberOfVertices(); i++)
-        {
-            _vertexArray[i] = _objLoader.getVertices()[i];
-        }
-
-        _numberOfIndices = 0;
-
-        this->initMaterials();
-        this->initVAO();
-        this->updateModelMatrix();
-    }
-
-    Mesh(
-        Primitive *primitive,
-        glm::vec3 position = glm::vec3(0.f),
-        glm::vec3 rotation = glm::vec3(0.f),
-        glm::vec3 scale = glm::vec3(1.f)
-    )
-        : _position(position)
-        , _rotation(rotation)
-        , _scale(scale)
-    {
-        _numberOfVertices = primitive->getNumberOfVertices();
-        _numberOfIndices = primitive->getNumberOfIndices();
-
-        _vertexArray = new Vertex[_numberOfVertices];
-        for (size_t i = 0; i < primitive->getNumberOfVertices(); i++)
-        {
-            _vertexArray[i] = primitive->getVertices()[i];
-        }
-
-        _indexArray = new GLuint[_numberOfIndices];
-        for (size_t i = 0; i < primitive->getNumberOfIndices(); i++)
-        {
-            _indexArray[i] = primitive->getIndices()[i];
-        }
-
-        this->initMaterials();
-        this->initVAO();
-        this->updateModelMatrix();
-    }
-
-    Mesh(const Mesh& other)
-    {
-        _position = other._position;
-        _rotation = other._rotation;
-        _scale = other._scale;
-
-        _numberOfVertices = other._numberOfVertices;
-        _numberOfIndices = other._numberOfIndices;
-
-        _vertexArray = new Vertex[_numberOfVertices];
-        for (size_t i = 0; i < _numberOfVertices; i++)
-        {
-            _vertexArray[i] = other._vertexArray[i];
-        }
-
-        _indexArray = new GLuint[_numberOfIndices];
-        for (size_t i = 0; i < _numberOfIndices; i++)
-        {
-            _indexArray[i] = other._indexArray[i];
-        }
-
-        this->initMaterials();
-        this->initVAO();
         this->updateModelMatrix();
     }
 
     ~Mesh()
     {
-        glDeleteVertexArrays(1, &this->_VAO);
-        glDeleteBuffers(1, &this->_VBO);
-
-        if (_numberOfIndices > 0)
+        for (auto*& subMesh : _subMeshes)
         {
-            glDeleteBuffers(1, &this->_EBO);
+            delete subMesh;
         }
+        _subMeshes.clear();
+    }
 
-        delete[] _vertexArray;
-        delete[] _indexArray;
-
-        for (size_t i = 0; i < _materials.size(); i++)
-        {
-            delete _materials[i];
-        }
+    void addSubMesh(SubMesh* subMesh)
+    {
+        _subMeshes.push_back(subMesh);
     }
 
     void setPosition(const glm::vec3 position) { this->_position = position; }
@@ -219,24 +90,10 @@ public:
         this->updateModelMatrix();
         this->updateUniforms(shader);
 
-        _materials[0]->bind(*shader);
-
-        shader->use();
-
-        glBindVertexArray(this->_VAO);
-
-        if (_numberOfIndices <= 0)
+        for (size_t i = 0; i < _subMeshes.size(); i++)
         {
-            glDrawArrays(GL_TRIANGLES, 0, _numberOfVertices);
+            _subMeshes[i]->render(shader);
         }
-        else
-        {
-            glDrawElements(GL_TRIANGLES, this->_numberOfIndices, GL_UNSIGNED_INT, 0);
-        }
-
-        _materials[0]->unbind();
-        glBindVertexArray(0);
-        glUseProgram(0);
     }
 };
 

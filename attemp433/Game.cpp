@@ -36,7 +36,6 @@ Game::Game(
     this->initOpenGLOptions();
     this->initMatrices();
     this->initShaders();
-    this->initModels();
     this->initLights();
     this->initUniforms();
 }
@@ -132,25 +131,6 @@ void Game::initMatrices()
 void Game::initShaders()
 {
     _shaders.push_back(new Shader(_GL_VERSION_MAJOR, _GL_VERSION_MINOR, "vertex_core.glsl", "fragment_core.glsl"));
-}
-
-void Game::initModels()
-{
-    std::vector<Mesh*> meshes;
-
-    meshes.push_back(new Mesh("images/floor.obj"));
-
-    _models.push_back(new Model2(
-        glm::vec3(0.f),
-        meshes
-    ));
-
-    for (auto*& i : meshes)
-    {
-        delete i;
-    }
-
-    meshes.clear();
 }
 
 void Game::initLights()

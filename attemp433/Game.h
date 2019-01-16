@@ -65,7 +65,7 @@ private:
 
     std::vector<Shader*> _shaders;
 
-    std::vector<Model2*> _models;
+    std::vector<Model*> _models;
 
     std::vector<glm::vec3*> _lights;
 
@@ -75,7 +75,6 @@ private:
     void initOpenGLOptions();
     void initMatrices();
     void initShaders();
-    void initModels();
     void initLights();
     void initUniforms();
 
@@ -106,6 +105,15 @@ public:
     void update();
 
     void render();
+
+    // setup
+
+    void addModel(Model* model)
+    {
+        _models.push_back(model);
+    }
+
+    // static
 
     static void frameBufferResizeCallback(GLFWwindow* window, int fbW, int fbH);
 };

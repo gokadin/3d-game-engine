@@ -5,6 +5,7 @@ struct Material
   vec3 ambient;
   vec3 diffuse;
   vec3 specular;
+  sampler2D ambientTex;
   sampler2D diffuseTex;
   sampler2D specularTex;
 };
@@ -49,7 +50,9 @@ void main()
   // attenuation
 
   // final
-  fs_color =
-    texture(material.diffuseTex, vs_texcoord)
-    * (ambientLight + diffuseLight + specularLight);
+  fs_color = vec4(material.ambient, 1.f) + vec4(material.diffuse, 1.f) + vec4(material.specular, 1.f);
+    //texture(material.diffuseTex, vs_texcoord)
+    //* (ambientLight + diffuseLight + specularLight);
+
+    // chek for null texture I guess !!!!!!!!!!!!!!!!!!!!!!!!
 }
