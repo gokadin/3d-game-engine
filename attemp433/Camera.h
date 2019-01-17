@@ -50,7 +50,7 @@ private:
 public:
     Camera(glm::vec3 position, glm::vec3 direction, glm::vec3 worldUp)
         : _position(position), _worldUp(worldUp)
-        , _movementSpeed(3.f), _sensitivity(5.f)
+        , _movementSpeed(15.f), _sensitivity(5.f)
     {
 
     }

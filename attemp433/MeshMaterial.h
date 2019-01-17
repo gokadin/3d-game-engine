@@ -27,16 +27,19 @@ public:
         if (_ambientTexture != nullptr)
         {
             delete _ambientTexture;
+            _ambientTexture = nullptr;
         }
 
         if (_diffuseTexture != nullptr)
         {
             delete _diffuseTexture;
+            _diffuseTexture = nullptr;
         }
 
         if (_specularTexture != nullptr)
         {
             delete _specularTexture;
+            _specularTexture = nullptr;
         }
     }
 
@@ -77,6 +80,9 @@ public:
         shader.set1i(0, "material.ambientTex");
         shader.set1i(1, "material.diffuseTex");
         shader.set1i(2, "material.specularTex");
+        shader.setBool(_ambientTexture != nullptr, "material.useAmbientTexture");
+        shader.setBool(_diffuseTexture != nullptr, "material.useDiffuseTexture");
+        shader.setBool(_specularTexture != nullptr, "material.useSpecularTexture");
 
         if (_ambientTexture != nullptr)
         {

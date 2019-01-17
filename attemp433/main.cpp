@@ -9,7 +9,7 @@ int main()
     // models
 
     Model* floor = new Model(glm::vec3(0.f));
-    floor->load("images/floor.obj");
+    floor->load("images/plane.obj");
 
     // game
 

@@ -8,6 +8,9 @@ struct Material
   sampler2D ambientTex;
   sampler2D diffuseTex;
   sampler2D specularTex;
+  bool useAmbientTexture;
+  bool useDiffuseTexture;
+  bool useSpecularTexture;
 };
 
 in vec3 vs_position;
@@ -50,9 +53,14 @@ void main()
   // attenuation
 
   // final
-  fs_color = vec4(material.ambient, 1.f) + vec4(material.diffuse, 1.f) + vec4(material.specular, 1.f);
-    //texture(material.diffuseTex, vs_texcoord)
-    //* (ambientLight + diffuseLight + specularLight);
-
-    // chek for null texture I guess !!!!!!!!!!!!!!!!!!!!!!!!
+  if (material.useDiffuseTexture)
+  {
+    fs_color = 
+        texture(material.diffuseTex, vs_texcoord)
+        * (ambientLight + diffuseLight + specularLight);
+  }
+  else
+  {
+    fs_color = (ambientLight + diffuseLight + specularLight);
+  }
 }

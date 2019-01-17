@@ -149,33 +149,21 @@ private:
 
     void parseAmbientTextureLine(std::string& line)
     {
-        std::string data = line.substr(8);
-        std::istringstream iss(data);
-
-        std::string filename;
-        iss >> filename;
+        std::string filename = line.substr(8);
 
         _materials[_currentMaterialName]->addAmbientTexture(filename);
     }
 
     void parseDiffuseTextureLine(std::string& line)
     {
-        std::string data = line.substr(8);
-        std::istringstream iss(data);
-
-        std::string filename;
-        iss >> filename;
+        std::string filename = line.substr(8);
 
         _materials[_currentMaterialName]->addDiffuseTexture(filename);
     }
 
     void parseSpecularTextureLine(std::string& line)
     {
-        std::string data = line.substr(8);
-        std::istringstream iss(data);
-
-        std::string filename;
-        iss >> filename;
+        std::string filename = line.substr(8);
 
         _materials[_currentMaterialName]->addSpecularTexture(filename);
     }
