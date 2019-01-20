@@ -13,7 +13,7 @@ private:
     glm::vec3 _rotation;
     glm::vec3 _scale;
 
-    std::vector<SubMesh*> _subMeshes;
+    std::vector<std::shared_ptr<SubMesh>> _subMeshes;
 
     glm::mat4 _ModelMatrix;
 
@@ -47,14 +47,10 @@ public:
 
     ~Mesh()
     {
-        for (auto*& subMesh : _subMeshes)
-        {
-            delete subMesh;
-        }
         _subMeshes.clear();
     }
 
-    void addSubMesh(SubMesh* subMesh)
+    void addSubMesh(const std::shared_ptr<SubMesh>& subMesh)
     {
         _subMeshes.push_back(subMesh);
     }

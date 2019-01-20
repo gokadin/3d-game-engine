@@ -8,7 +8,7 @@
 class MaterialParser
 {
 public:
-    std::map<std::string, MeshMaterial*> parse(std::string filename)
+    std::map<std::string, std::shared_ptr<MeshMaterial>>& parse(std::string filename)
     {
         std::cout << "loading " << filename << std::endl;
 
@@ -36,15 +36,11 @@ public:
 
     ~MaterialParser()
     {
-        for (auto const&[key, value] : _materials)
-        {
-            delete value;
-        }
         _materials.clear();
     }
 
 private:
-    std::map<std::string, MeshMaterial*> _materials;
+    std::map<std::string, std::shared_ptr<MeshMaterial>> _materials;
     std::string _currentMaterialName;
 
     void parseLine(std::string& line)
@@ -94,7 +90,7 @@ private:
     {
         _currentMaterialName = line.substr(7);
 
-        _materials[_currentMaterialName] = new MeshMaterial(_currentMaterialName);
+        _materials[_currentMaterialName] = std::make_shared<MeshMaterial>(_currentMaterialName);
     }
 
     void parseAmbientLine(std::string& line)

@@ -12,35 +12,14 @@ class MeshMaterial
 public:
     MeshMaterial(std::string name)
         : _name(name)
-    {
-        _ambientColor = glm::vec3(0.f);
-        _diffuseColor = glm::vec3(0.f);
-        _specularColor = glm::vec3(0.f);
-        _specularExponent = 0;
-        _ambientTexture = nullptr;
-        _diffuseTexture = nullptr;
-        _specularTexture = nullptr;
-    }
+        , _ambientColor(glm::vec3(0.f))
+        , _diffuseColor(glm::vec3(0.f))
+        , _specularColor(glm::vec3(0.f))
+        , _specularExponent(0) { }
 
     ~MeshMaterial()
     {
-        if (_ambientTexture != nullptr)
-        {
-            delete _ambientTexture;
-            _ambientTexture = nullptr;
-        }
 
-        if (_diffuseTexture != nullptr)
-        {
-            delete _diffuseTexture;
-            _diffuseTexture = nullptr;
-        }
-
-        if (_specularTexture != nullptr)
-        {
-            delete _specularTexture;
-            _specularTexture = nullptr;
-        }
     }
 
     inline std::string& getName() { return _name; }
@@ -48,9 +27,9 @@ public:
     inline glm::vec3& getDiffuseColor() { return _diffuseColor; }
     inline glm::vec3& getSpecularColor() { return _specularColor; }
     inline int getSpecularExponent() { return _specularExponent; }
-    inline Texture* getAmbientTexture() { return _ambientTexture; }
-    inline Texture* getDiffuseTexture() { return _diffuseTexture; }
-    inline Texture* getSpecularTexture() { return _specularTexture; }
+    inline std::unique_ptr<Texture>& getAmbientTexture() { return _ambientTexture; }
+    inline std::unique_ptr<Texture>& getDiffuseTexture() { return _diffuseTexture; }
+    inline std::unique_ptr<Texture>& getSpecularTexture() { return _specularTexture; }
 
     inline void setAmbientColor(glm::vec3 ambientColor) { _ambientColor = ambientColor; }
     inline void setDiffuseColor(glm::vec3 diffuseColor) { _diffuseColor = diffuseColor; }
@@ -59,17 +38,17 @@ public:
 
     void addAmbientTexture(std::string filename)
     {
-        _ambientTexture = new Texture(filename, GL_TEXTURE_2D);
+        _ambientTexture = std::make_unique<Texture>(filename, GL_TEXTURE_2D);
     }
 
     void addDiffuseTexture(std::string filename)
     {
-        _diffuseTexture = new Texture(filename, GL_TEXTURE_2D);
+        _diffuseTexture = std::make_unique<Texture>(filename, GL_TEXTURE_2D);
     }
 
     void addSpecularTexture(std::string filename)
     {
-        _specularTexture = new Texture(filename, GL_TEXTURE_2D);
+        _specularTexture = std::make_unique<Texture>(filename, GL_TEXTURE_2D);
     }
 
     void bind(Shader& shader)
@@ -124,7 +103,7 @@ private:
     glm::vec3 _diffuseColor;
     glm::vec3 _specularColor;
     int _specularExponent;
-    Texture* _ambientTexture;
-    Texture* _diffuseTexture;
-    Texture* _specularTexture;
+    std::unique_ptr<Texture> _ambientTexture;
+    std::unique_ptr<Texture> _diffuseTexture;
+    std::unique_ptr<Texture> _specularTexture;
 };

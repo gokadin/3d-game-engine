@@ -9,7 +9,7 @@
 class Model
 {
 private:
-    std::vector<Mesh*> _meshes;
+    std::vector<std::shared_ptr<Mesh>> _meshes;
     glm::vec3 _position;
 
     ObjLoader _objLoader;
@@ -20,11 +20,7 @@ public:
 
     ~Model()
     {
-        for (auto*& i : _meshes)
-        {
-            delete i;
-        }
-        _meshes.clear();
+       _meshes.clear();
     }
 
     void load(std::string filename)
@@ -34,17 +30,17 @@ public:
             _meshes.push_back(value);
         }
 
-        for (auto* i : _meshes)
+        for (auto& mesh : _meshes)
         {
-            i->move(_position);
+            mesh->move(_position);
         }
     }
 
     void rotate(glm::vec3 rotation)
     {
-        for (auto& i : _meshes)
+        for (auto& mesh : _meshes)
         {
-            i->rotate(rotation);
+            mesh->rotate(rotation);
         }
     }
 
@@ -55,9 +51,9 @@ public:
 
     void render(Shader* shader)
     {
-        for (auto& i : _meshes)
+        for (auto& mesh : _meshes)
         {
-            i->render(shader);
+            mesh->render(shader);
         }
     }
 };

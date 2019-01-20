@@ -50,11 +50,6 @@ Game::~Game()
         delete _shaders[i];
     }
 
-    for (auto*& i : _models)
-    {
-        delete i;
-    }
-
     for (size_t i = 0; i < _lights.size(); i++)
     {
         delete _lights[i];

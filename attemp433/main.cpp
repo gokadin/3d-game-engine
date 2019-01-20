@@ -8,7 +8,7 @@ int main()
 
     // models
 
-    Model* floor = new Model(glm::vec3(0.f));
+    std::shared_ptr<Model> floor = std::make_shared<Model>(glm::vec3(0.f));
     floor->load("images/plane.obj");
 
     // game
@@ -20,10 +20,6 @@ int main()
         game.update();
         game.render();
     }
-
-    // clean up
-
-    delete floor;
 
     return 0;
 }

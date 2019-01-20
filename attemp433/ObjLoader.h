@@ -26,8 +26,8 @@ private:
     std::vector<glm::vec3> _normals;
     std::vector<Vertex> _vertices;
 
-    std::map<std::string, MeshMaterial*> _materials;
-    std::map<std::string, Mesh*> _meshes;
+    std::map<std::string, std::shared_ptr<MeshMaterial>> _materials;
+    std::map<std::string, std::shared_ptr<Mesh>> _meshes;
 
     bool wasLastLineVertex;
     std::string _currentMeshName;
@@ -46,7 +46,7 @@ private:
             {
                 // end of vertex group
 
-                _meshes[_currentMeshName]->addSubMesh(new SubMesh(
+                _meshes[_currentMeshName]->addSubMesh(std::make_shared<SubMesh>(
                     _materials[_currentMaterialName], 
                     _vertices
                     ));
@@ -149,7 +149,7 @@ private:
         iss >> name;
 
         _currentMeshName = name;
-        _meshes[_currentMeshName] = new Mesh();
+        _meshes[_currentMeshName] = std::make_shared<Mesh>();
     }
 
     void parseVertexLine(std::string& line)
@@ -187,7 +187,10 @@ private:
     }
 
 public:
-    std::map<std::string, Mesh*> load(std::string filename)
+    ObjLoader()
+        : wasLastLineVertex(false) { }
+
+    std::map<std::string, std::shared_ptr<Mesh>>& load(std::string filename)
     {
         std::cout << "loading " << filename << std::endl;
 

@@ -65,7 +65,7 @@ private:
 
     std::vector<Shader*> _shaders;
 
-    std::vector<Model*> _models;
+    std::vector<std::shared_ptr<Model>> _models;
 
     std::vector<glm::vec3*> _lights;
 
@@ -108,7 +108,7 @@ public:
 
     // setup
 
-    void addModel(Model* model)
+    void addModel(std::shared_ptr<Model>& model)
     {
         _models.push_back(model);
     }

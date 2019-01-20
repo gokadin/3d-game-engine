@@ -16,7 +16,7 @@ private:
     GLuint _VBO;
     GLuint _EBO;
 
-    MeshMaterial* _material;
+    std::shared_ptr<MeshMaterial> _material;
 
     void initVAO()
     {
@@ -48,7 +48,7 @@ private:
     }
 
 public:
-    SubMesh(MeshMaterial* material, std::vector<Vertex> vertices)
+    SubMesh(const std::shared_ptr<MeshMaterial>& material, std::vector<Vertex> vertices)
         : _material(material)
     {
 
@@ -61,6 +61,7 @@ public:
         }
 
         _numberOfIndices = 0;
+        _indexArray = nullptr;
 
         this->initVAO();
     }
@@ -76,9 +77,11 @@ public:
         }
 
         delete[] _vertexArray;
-        delete[] _indexArray;
 
-        delete _material;
+        if (_indexArray != nullptr)
+        {
+            delete[] _indexArray;
+        }
     }
 
     void render(Shader* shader)
