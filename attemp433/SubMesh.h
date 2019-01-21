@@ -12,6 +12,8 @@ private:
     GLuint* _indexArray;
     unsigned _numberOfIndices;
 
+    GLenum _polygonMode;
+
     GLuint _VAO;
     GLuint _VBO;
     GLuint _EBO;
@@ -49,7 +51,7 @@ private:
 
 public:
     SubMesh(const std::shared_ptr<MeshMaterial>& material, std::vector<Vertex> vertices)
-        : _material(material)
+        : _material(material), _polygonMode(GL_FILL)
     {
 
         _numberOfVertices = vertices.size();
@@ -84,11 +86,22 @@ public:
         }
     }
 
+    unsigned getNumberOfVertices() { return _numberOfVertices; }
+
+    Vertex* getVertices() { return _vertexArray; }
+
+    inline void setPolygonMode(GLenum mode) { _polygonMode = mode; }
+
     void render(Shader* shader)
     {
         _material->bind(*shader);
         glBindVertexArray(this->_VAO);
         shader->use();
+
+        if (_polygonMode != GL_FILL)
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        }
 
         if (_numberOfIndices <= 0)
         {
@@ -97,6 +110,11 @@ public:
         else
         {
             glDrawElements(GL_TRIANGLES, this->_numberOfIndices, GL_UNSIGNED_INT, 0);
+        }
+
+        if (_polygonMode != GL_FILL)
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
 
         _material->unbind();

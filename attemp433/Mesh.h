@@ -61,6 +61,8 @@ public:
 
     void setScale(const glm::vec3 scale) { this->_scale = scale; }
 
+    const std::vector<std::shared_ptr<SubMesh>>& getSubMeshes() { return _subMeshes; }
+
     void move(const glm::vec3 position)
     {
         this->_position += position;

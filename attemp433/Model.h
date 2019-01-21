@@ -5,55 +5,41 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "ObjLoader.h"
+#include "ItemPhysics.h"
 
 class Model
 {
 private:
+    uint32_t _id;
     std::vector<std::shared_ptr<Mesh>> _meshes;
     glm::vec3 _position;
+    glm::vec3 _displacement;
+    ItemPhysics _physics;
 
     ObjLoader _objLoader;
 
+    void move();
+
 public:
-    Model(glm::vec3 position)
-        : _position(position) { }
+    Model(glm::vec3 position);
 
-    ~Model()
-    {
-       _meshes.clear();
-    }
+    ~Model();
 
-    void load(std::string filename)
-    {
-        for (auto const&[key, value] : _objLoader.load(filename))
-        {
-            _meshes.push_back(value);
-        }
+    inline const uint32_t getId() { return _id; }
 
-        for (auto& mesh : _meshes)
-        {
-            mesh->move(_position);
-        }
-    }
+    inline ItemPhysics& getPhysics() { return _physics; }
 
-    void rotate(glm::vec3 rotation)
-    {
-        for (auto& mesh : _meshes)
-        {
-            mesh->rotate(rotation);
-        }
-    }
+    void load(std::string filename);
 
-    void update()
-    {
+    inline const glm::vec3& getPosition() { return _position; }
 
-    }
+    void setDisplacement(const glm::vec3 displacement);
 
-    void render(Shader* shader)
-    {
-        for (auto& mesh : _meshes)
-        {
-            mesh->render(shader);
-        }
-    }
+    const glm::vec3& getFuturePosition();
+
+    void rotate(glm::vec3 rotation);
+
+    void update();
+
+    void render(Shader* shader);
 };

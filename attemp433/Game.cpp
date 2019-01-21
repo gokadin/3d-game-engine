@@ -230,6 +230,15 @@ void Game::update()
 {
     this->updateDt();
     this->updateInput();
+
+    _physics.updateModels(_models);
+
+    _collisionManager.updateCollisions(_models);
+
+    for (auto& model : _models)
+    {
+        model->update();
+    }
 }
 
 void Game::render()

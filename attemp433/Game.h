@@ -2,6 +2,8 @@
 
 #include "libs.h"
 #include "Camera.h"
+#include "WorldPhysics.h"
+#include "CollisionManager.h"
 
 enum shaderEnum
 {
@@ -69,6 +71,10 @@ private:
 
     std::vector<glm::vec3*> _lights;
 
+    WorldPhysics _physics;
+
+    CollisionManager _collisionManager;
+
     void initGLFW();
     void initWindow(const char* title, bool resizable);
     void initGLEW();
@@ -112,6 +118,8 @@ public:
     {
         _models.push_back(model);
     }
+
+    inline WorldPhysics& getPhysics() { return _physics; }
 
     // static
 
