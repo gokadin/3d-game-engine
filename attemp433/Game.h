@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "WorldPhysics.h"
 #include "CollisionManager.h"
+#include "loader/GameLoader.h"
 
 enum shaderEnum
 {
@@ -62,6 +63,8 @@ private:
     double _mouseOffsetY;
     bool _firstMouse;
 
+    GameLoader _gameLoader;
+
     // camera
     Camera _camera;
 
@@ -95,6 +98,8 @@ public:
     );
 
     virtual ~Game();
+
+    void load(const std::string rootDirectory);
 
     int getWindowShouldClose();
 

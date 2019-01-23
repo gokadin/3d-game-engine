@@ -1,0 +1,13 @@
+# CUBE MODEL
+
+def mesh
+	file: cube.obj
+
+def properties
+	name: cube
+	size: 5 5 5
+	
+def physics
+	enable_gravity: true
+	enable_collision: true
+	

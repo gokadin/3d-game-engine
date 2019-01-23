@@ -1,43 +1,40 @@
-#include "Model.h"
+#include "Mesh.h"
 
-Model::Model(glm::vec3 position)
-    : _position(position), _displacement(glm::vec3(0.f))
+Mesh::Mesh(
+    glm::vec3 position = glm::vec3(0.f),
+    glm::vec3 rotation = glm::vec3(0.f),
+    glm::vec3 scale = glm::vec3(1.f)
+)
+    : _position(position), _rotation(rotation), _scale(scale), _displacement(glm::vec3(0.f))
 {
     _id = reinterpret_cast<uint32_t>(this);
+    this->updateModelMatrix();
 }
 
-Model::~Model()
+Mesh::~Mesh()
 {
 }
 
-void Model::load(std::string filename)
+void Mesh::load(std::string filename)
 {
     for (auto const&[key, value] : _objLoader.load(filename))
     {
         value->move(_position);
-        _meshes.push_back(value);
+        _subMeshes.push_back(value);
     }
 }
 
-void Model::setDisplacement(const glm::vec3 displacement)
+void Mesh::setDisplacement(const glm::vec3 displacement)
 {
     _displacement = displacement;
 }
 
-const glm::vec3 & Model::getFuturePosition()
+const glm::vec3 & Mesh::getFuturePosition()
 {
     return _position + _displacement;
 }
 
-void Model::rotate(glm::vec3 rotation)
-{
-    for (auto& mesh : _meshes)
-    {
-        mesh->rotate(rotation);
-    }
-}
-
-void Model::update()
+void Mesh::update()
 {
     if (!_physics.getCollision().hasCollided())
     {
@@ -51,7 +48,7 @@ void Model::update()
     }
 }
 
-void Model::render(Shader* shader)
+void Mesh::render(Shader* shader)
 {
     for (auto& mesh : _meshes)
     {
@@ -61,14 +58,14 @@ void Model::render(Shader* shader)
     _physics.renderDebug(shader);
 }
 
-void Model::move(const glm::vec3 displacement)
+void Mesh::move(const glm::vec3 displacement)
 {
     _displacement = displacement;
 
     _physics.getCollision().move(displacement);
 }
 
-void Model::commit()
+void Mesh::commit()
 {
     _position += _displacement;
 

@@ -28,6 +28,6 @@ void WorldPhysics::updateModelGravity(const std::shared_ptr<Model>& model)
     {
         glm::vec3 displacement = glm::vec3(0.f, -0.01f, 0.f);
 
-        model->setDisplacement(displacement);
+        model->move(displacement);
     }
 }

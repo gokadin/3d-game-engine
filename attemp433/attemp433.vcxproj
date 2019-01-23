@@ -23,12 +23,19 @@
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="loader\GameLoader.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MaterialRegistry.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshRegistry.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModelRegistry.cpp" />
+    <ClCompile Include="Registry.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="WorldPhysics.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoundingBox.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Collision.h" />
@@ -36,12 +43,17 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="ItemPhysics.h" />
     <ClInclude Include="libs.h" />
+    <ClInclude Include="loader\GameLoader.h" />
     <ClInclude Include="MaterialParser.h" />
+    <ClInclude Include="MaterialRegistry.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshMaterial.h" />
+    <ClInclude Include="MeshRegistry.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="ModelRegistry.h" />
     <ClInclude Include="ObjLoader.h" />
     <ClInclude Include="Primitives.h" />
+    <ClInclude Include="Registry.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SubMesh.h" />
     <ClInclude Include="Texture.h" />

@@ -56,6 +56,11 @@ Game::~Game()
     }
 }
 
+void Game::load(const std::string rootDirectory)
+{
+    _gameLoader.load(rootDirectory);
+}
+
 void Game::initGLFW()
 {
     if (glfwInit() == GLFW_FALSE)

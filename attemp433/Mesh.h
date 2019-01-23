@@ -5,6 +5,8 @@
 
 #include "Shader.h"
 #include "SubMesh.h"
+#include "ItemPhysics.h"
+#include "ObjLoader.h"
 
 class Mesh
 {
@@ -16,6 +18,13 @@ private:
     std::vector<std::shared_ptr<SubMesh>> _subMeshes;
 
     glm::mat4 _ModelMatrix;
+
+    uint32_t _id;
+    //glm::vec3 _position;
+    glm::vec3 _displacement;
+    ItemPhysics _physics;
+
+    ObjLoader _objLoader;
 
     void updateUniforms(Shader* shader)
     {
@@ -33,22 +42,13 @@ private:
     }
 
 public:
-     Mesh(
+    Mesh(
         glm::vec3 position = glm::vec3(0.f),
         glm::vec3 rotation = glm::vec3(0.f),
         glm::vec3 scale = glm::vec3(1.f)
-    )
-        : _position(position)
-        , _rotation(rotation)
-        , _scale(scale)
-    {
-        this->updateModelMatrix();
-    }
+    );
 
-    ~Mesh()
-    {
-        _subMeshes.clear();
-    }
+    ~Mesh();
 
     void addSubMesh(const std::shared_ptr<SubMesh>& subMesh)
     {
@@ -78,11 +78,6 @@ public:
         this->_scale += scale;
     }
 
-    void update()
-    {
-
-    }
-
     void render(Shader* shader)
     {
         this->updateModelMatrix();
@@ -93,5 +88,27 @@ public:
             _subMeshes[i]->render(shader);
         }
     }
+
+    // ...
+
+    inline const uint32_t getId() { return _id; }
+
+    inline ItemPhysics& getPhysics() { return _physics; }
+
+    void load(std::string filename);
+
+    inline const glm::vec3& getPosition() { return _position; }
+
+    void setDisplacement(const glm::vec3 displacement);
+
+    void move(const glm::vec3 displacement);
+
+    const glm::vec3& getFuturePosition();
+
+    void update();
+
+    void render(Shader* shader);
+
+    void commit();
 };
 

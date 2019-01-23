@@ -18,8 +18,6 @@ private:
 
     ObjLoader _objLoader;
 
-    void move();
-
 public:
     Model(glm::vec3 position);
 
@@ -35,6 +33,8 @@ public:
 
     void setDisplacement(const glm::vec3 displacement);
 
+    void move(const glm::vec3 displacement);
+
     const glm::vec3& getFuturePosition();
 
     void rotate(glm::vec3 rotation);
@@ -42,4 +42,6 @@ public:
     void update();
 
     void render(Shader* shader);
+
+    void commit();
 };

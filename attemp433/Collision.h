@@ -7,6 +7,7 @@
 #include "SubMesh.h"
 #include "Mesh.h"
 #include "Vertex.h"
+#include "BoundingBox.h"
 
 class Collision
 {
@@ -15,19 +16,27 @@ public:
 
     ~Collision();
 
-    void addBoundingBox(const std::vector<std::shared_ptr<Mesh>>& meshes, const glm::vec3& position);
+    void addBoundingBox(glm::vec3 position, glm::vec3 size);
 
     void renderDebug(Shader* shader);
 
     void move(glm::vec3 position);
 
-    bool isColliding(glm::vec3 position);
+    bool isColliding(Collision& other);
+
+    inline void setCollided(bool value) { _hasCollided = value; }
+
+    inline bool hasCollided() const { return _hasCollided; }
+
+    inline const BoundingBox& getBoundingBox() { return _boundingBox; }
+
+    void update();
 
 private:
     std::unique_ptr<SubMesh> _debugSubMesh;
 
-    float _minX, _maxX, _minY, _maxY, _minZ, _maxZ;
+    BoundingBox _boundingBox;
 
-    void setEdgeCoordinates(const std::vector<std::shared_ptr<Mesh>>& meshes, const glm::vec3 & position);
+    bool _hasCollided;
 };
 
