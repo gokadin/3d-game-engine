@@ -6,6 +6,7 @@
 #include <vec3.hpp>
 
 #include "Texture.h"
+#include "Shader.h"
 
 class MeshMaterial
 {

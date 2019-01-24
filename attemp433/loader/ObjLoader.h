@@ -8,15 +8,16 @@
 
 #include <glm.hpp>
 
-#include "Vertex.h"
-#include "Mesh.h"
-#include "MeshMaterial.h"
 #include "MaterialParser.h"
-#include "SubMesh.h"
+#include "Registry.h"
+#include "../Vertex.h"
+#include "../MeshMaterial.h"
+#include "../Mesh.h"
 
 class ObjLoader
 {
 private:
+    Registry& _registry;
     std::string _objFilename;
 
     MaterialParser _materialParser;
@@ -26,7 +27,6 @@ private:
     std::vector<glm::vec3> _normals;
     std::vector<Vertex> _vertices;
 
-    std::map<std::string, std::shared_ptr<MeshMaterial>> _materials;
     std::map<std::string, std::shared_ptr<Mesh>> _meshes;
 
     bool wasLastLineVertex;
@@ -46,10 +46,10 @@ private:
             {
                 // end of vertex group
 
-                _meshes[_currentMeshName]->addSubMesh(std::make_shared<SubMesh>(
-                    _materials[_currentMaterialName], 
+                _meshes[_currentMeshName] = std::make_shared<Mesh>(
+                    _registry.findMaterial(_currentMaterialName),
                     _vertices
-                    ));
+                    );
 
                 _vertices.clear();
             }
@@ -94,7 +94,7 @@ private:
         std::string path = _objFilename.substr(0, _objFilename.rfind("/") + 1);
         std::string materialFilename = path + data;
 
-        _materials = _materialParser.parse(materialFilename);
+        _materialParser.parse(materialFilename);
     }
 
     void parseUseMaterialLine(std::string& line)
@@ -149,7 +149,6 @@ private:
         iss >> name;
 
         _currentMeshName = name;
-        _meshes[_currentMeshName] = std::make_shared<Mesh>();
     }
 
     void parseVertexLine(std::string& line)
@@ -187,11 +186,17 @@ private:
     }
 
 public:
-    ObjLoader()
-        : wasLastLineVertex(false) { }
+    ObjLoader(Registry& registry)
+        : wasLastLineVertex(false), _registry(registry), _materialParser(registry) { }
 
     std::map<std::string, std::shared_ptr<Mesh>>& load(std::string filename)
     {
+        _positions.clear();
+        _normals.clear();
+        _texcoords.clear();
+        _vertices.clear();
+        _meshes.clear();
+
         std::cout << "loading " << filename << std::endl;
 
         _objFilename = filename;

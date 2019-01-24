@@ -31,20 +31,11 @@
     <Filter Include="Header Files\engine">
       <UniqueIdentifier>{bf4e88b6-3ab8-4b68-99f7-eb00fa6912de}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\game">
-      <UniqueIdentifier>{d1a30cd6-5bf6-4909-a3a6-7f63dbb0128c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\engine\character">
       <UniqueIdentifier>{fd2fb221-d9fe-4c2d-96a9-17df861654fd}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\engine\core">
       <UniqueIdentifier>{9e407d15-d9a7-42f3-814d-b3ee1ca74705}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\engine\utils">
-      <UniqueIdentifier>{56604fbd-d007-4801-ba18-1fb2c55ed931}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\engine\utils\loaders">
-      <UniqueIdentifier>{640e5ebf-8373-43f7-81c6-25a9029aabd0}</UniqueIdentifier>
     </Filter>
     <Filter Include="loader">
       <UniqueIdentifier>{7c47fa1a-d27a-4931-b512-555d18006537}</UniqueIdentifier>
@@ -59,9 +50,6 @@
     </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Source Files\engine\core</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Collision.cpp">
       <Filter>Source Files</Filter>
@@ -78,33 +66,30 @@
     <ClCompile Include="loader\GameLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Registry.cpp">
+    <ClCompile Include="Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ModelRegistry.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="loader\MaterialRegistry.cpp">
+      <Filter>loader</Filter>
     </ClCompile>
-    <ClCompile Include="MaterialRegistry.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="loader\MeshRegistry.cpp">
+      <Filter>loader</Filter>
     </ClCompile>
-    <ClCompile Include="MeshRegistry.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="loader\ModelRegistry.cpp">
+      <Filter>loader</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="loader\Registry.cpp">
+      <Filter>loader</Filter>
+    </ClCompile>
+    <ClCompile Include="loader\ModelLoader.cpp">
+      <Filter>loader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ObjLoader.h">
-      <Filter>Header Files\engine\utils\loaders</Filter>
-    </ClInclude>
     <ClInclude Include="Character.h">
       <Filter>Header Files\engine\character</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Header Files\engine\core</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
       <Filter>Header Files\engine\core</Filter>
     </ClInclude>
     <ClInclude Include="Primitives.h">
@@ -123,18 +108,6 @@
       <Filter>Header Files\engine\core</Filter>
     </ClInclude>
     <ClInclude Include="libs.h">
-      <Filter>Header Files\engine\core</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Header Files\engine\core</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshMaterial.h">
-      <Filter>Header Files\engine\utils\loaders</Filter>
-    </ClInclude>
-    <ClInclude Include="MaterialParser.h">
-      <Filter>Header Files\engine\utils\loaders</Filter>
-    </ClInclude>
-    <ClInclude Include="SubMesh.h">
       <Filter>Header Files\engine\core</Filter>
     </ClInclude>
     <ClInclude Include="ItemPhysics.h">
@@ -158,16 +131,34 @@
     <ClInclude Include="loader\GameLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Registry.h">
+    <ClInclude Include="Model.h">
+      <Filter>Header Files\engine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="loader\ModelRegistry.h">
+      <Filter>loader</Filter>
+    </ClInclude>
+    <ClInclude Include="loader\MeshRegistry.h">
+      <Filter>loader</Filter>
+    </ClInclude>
+    <ClInclude Include="loader\MaterialRegistry.h">
+      <Filter>loader</Filter>
+    </ClInclude>
+    <ClInclude Include="loader\Registry.h">
+      <Filter>loader</Filter>
+    </ClInclude>
+    <ClInclude Include="loader\ModelLoader.h">
+      <Filter>loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\engine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="loader\ObjLoader.h">
+      <Filter>loader</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshMaterial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ModelRegistry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MaterialRegistry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshRegistry.h">
+    <ClInclude Include="loader\MaterialParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

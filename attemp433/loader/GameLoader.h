@@ -4,6 +4,9 @@
 #include <filesystem>
 #include <iostream>
 
+#include "Registry.h"
+#include "ModelLoader.h"
+
 class GameLoader
 {
 public:
@@ -12,5 +15,19 @@ public:
     ~GameLoader();
 
     void load(const std::string& rootDirectory);
+
+    inline Registry& getRegistry() { return _registry; }
+
+    void printModelNames()
+    {
+        _registry.printModelNames();
+    }
+
+private:
+    const std::string MODEL_DIRECTORY = "models";
+
+    Registry _registry;
+
+    ModelLoader _modelLoader;
 };
 

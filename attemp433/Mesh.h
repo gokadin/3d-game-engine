@@ -1,114 +1,126 @@
 #pragma once
 
-#include <iostream>
 #include <vector>
 
+#include "MeshMaterial.h"
+#include "Vertex.h"
 #include "Shader.h"
-#include "SubMesh.h"
-#include "ItemPhysics.h"
-#include "ObjLoader.h"
 
 class Mesh
 {
 private:
-    glm::vec3 _position;
-    glm::vec3 _rotation;
-    glm::vec3 _scale;
+    Vertex* _vertexArray;
+    unsigned _numberOfVertices;
+    GLuint* _indexArray;
+    unsigned _numberOfIndices;
 
-    std::vector<std::shared_ptr<SubMesh>> _subMeshes;
+    GLenum _polygonMode;
 
-    glm::mat4 _ModelMatrix;
+    GLuint _VAO;
+    GLuint _VBO;
+    GLuint _EBO;
 
-    uint32_t _id;
-    //glm::vec3 _position;
-    glm::vec3 _displacement;
-    ItemPhysics _physics;
+    std::shared_ptr<MeshMaterial> _material;
 
-    ObjLoader _objLoader;
-
-    void updateUniforms(Shader* shader)
+    void initVAO()
     {
-        shader->setMat4fv(this->_ModelMatrix, "ModelMatrix");
-    }
+        glCreateVertexArrays(1, &this->_VAO);
+        glBindVertexArray(this->_VAO);
 
-    void updateModelMatrix()
-    {
-        this->_ModelMatrix = glm::mat4(1.f);
-        this->_ModelMatrix = glm::translate(this->_ModelMatrix, this->_position);
-        this->_ModelMatrix = glm::rotate(this->_ModelMatrix, glm::radians(this->_rotation.x), glm::vec3(1.f, 0.f, 0.f));
-        this->_ModelMatrix = glm::rotate(this->_ModelMatrix, glm::radians(this->_rotation.y), glm::vec3(0.f, 1.f, 0.f));
-        this->_ModelMatrix = glm::rotate(this->_ModelMatrix, glm::radians(this->_rotation.z), glm::vec3(0.f, 0.f, 1.f));
-        this->_ModelMatrix = glm::scale(this->_ModelMatrix, this->_scale);
+        glGenBuffers(1, &this->_VBO);
+        glBindBuffer(GL_ARRAY_BUFFER, this->_VBO);
+        glBufferData(GL_ARRAY_BUFFER, this->_numberOfVertices * sizeof(Vertex), _vertexArray, GL_STATIC_DRAW); // GL_STATIC_DRAW if not changing much ortherwise GL_DYNAMIC_DRAW
+
+        glGenBuffers(1, &this->_EBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->_EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->_numberOfIndices * sizeof(GLuint), _indexArray, GL_STATIC_DRAW);
+
+        // input assembly (how we tell the shader what each float is in our buffer)
+        // position
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
+        glEnableVertexAttribArray(0);
+
+        // texcoord
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texcoord));
+        glEnableVertexAttribArray(1);
+
+        // normal
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
+        glEnableVertexAttribArray(2);
+
+        glBindVertexArray(0);
     }
 
 public:
-    Mesh(
-        glm::vec3 position = glm::vec3(0.f),
-        glm::vec3 rotation = glm::vec3(0.f),
-        glm::vec3 scale = glm::vec3(1.f)
-    );
-
-    ~Mesh();
-
-    void addSubMesh(const std::shared_ptr<SubMesh>& subMesh)
+    Mesh(const std::shared_ptr<MeshMaterial>& material, std::vector<Vertex> vertices)
+        : _material(material), _polygonMode(GL_FILL)
     {
-        _subMeshes.push_back(subMesh);
-    }
 
-    void setPosition(const glm::vec3 position) { this->_position = position; }
+        _numberOfVertices = vertices.size();
 
-    void setRotation(const glm::vec3 rotation) { this->_rotation = rotation; }
-
-    void setScale(const glm::vec3 scale) { this->_scale = scale; }
-
-    const std::vector<std::shared_ptr<SubMesh>>& getSubMeshes() { return _subMeshes; }
-
-    void move(const glm::vec3 position)
-    {
-        this->_position += position;
-    }
-
-    void rotate(const glm::vec3 rotation)
-    {
-        this->_rotation += rotation;
-    }
-
-    void scale(const glm::vec3 scale)
-    {
-        this->_scale += scale;
-    }
-
-    void render(Shader* shader)
-    {
-        this->updateModelMatrix();
-        this->updateUniforms(shader);
-
-        for (size_t i = 0; i < _subMeshes.size(); i++)
+        _vertexArray = new Vertex[_numberOfVertices];
+        for (size_t i = 0; i < _numberOfVertices; i++)
         {
-            _subMeshes[i]->render(shader);
+            _vertexArray[i] = vertices[i];
+        }
+
+        _numberOfIndices = 0;
+        _indexArray = nullptr;
+
+        this->initVAO();
+    }
+
+    ~Mesh()
+    {
+        glDeleteVertexArrays(1, &this->_VAO);
+        glDeleteBuffers(1, &this->_VBO);
+
+        if (_numberOfIndices > 0)
+        {
+            glDeleteBuffers(1, &this->_EBO);
+        }
+
+        delete[] _vertexArray;
+
+        if (_indexArray != nullptr)
+        {
+            delete[] _indexArray;
         }
     }
 
-    // ...
+    unsigned getNumberOfVertices() { return _numberOfVertices; }
 
-    inline const uint32_t getId() { return _id; }
+    Vertex* getVertices() { return _vertexArray; }
 
-    inline ItemPhysics& getPhysics() { return _physics; }
+    inline void setPolygonMode(GLenum mode) { _polygonMode = mode; }
 
-    void load(std::string filename);
+    void render(Shader* shader)
+    {
+        _material->bind(*shader);
+        glBindVertexArray(this->_VAO);
+        shader->use();
 
-    inline const glm::vec3& getPosition() { return _position; }
+        if (_polygonMode != GL_FILL)
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        }
 
-    void setDisplacement(const glm::vec3 displacement);
+        if (_numberOfIndices <= 0)
+        {
+            glDrawArrays(GL_TRIANGLES, 0, _numberOfVertices);
+        }
+        else
+        {
+            glDrawElements(GL_TRIANGLES, this->_numberOfIndices, GL_UNSIGNED_INT, 0);
+        }
 
-    void move(const glm::vec3 displacement);
+        if (_polygonMode != GL_FILL)
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
 
-    const glm::vec3& getFuturePosition();
-
-    void update();
-
-    void render(Shader* shader);
-
-    void commit();
+        _material->unbind();
+        glBindVertexArray(0);
+        glUseProgram(0);
+    }
 };
-

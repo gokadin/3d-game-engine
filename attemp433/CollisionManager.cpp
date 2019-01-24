@@ -22,7 +22,7 @@ void CollisionManager::updateCollisions(const std::vector<std::shared_ptr<Model>
 
         for (auto& otherModel : models)
         {
-            if (!otherModel->getPhysics().isCollisionEnabled() || otherModel->getId() == model->getId())
+            if (!otherModel->getPhysics().isCollisionEnabled() || otherModel->getName() == model->getName())
             {
                 continue;
             }

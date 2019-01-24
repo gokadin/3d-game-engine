@@ -1,0 +1,14 @@
+### CUBE MODEL ###
+
+# MESH
+$mesh_file: cube.obj
+
+# PROPERTIES
+$name: cube
+$size: 5 5 5
+$position: 0 6 0
+	
+# PHYSICS
+$enable_gravity: true
+$enable_collision: true
+$bounding_box: cube

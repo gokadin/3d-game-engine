@@ -4,9 +4,6 @@
 #include <memory>
 
 #include "Shader.h"
-#include "SubMesh.h"
-#include "Mesh.h"
-#include "Vertex.h"
 #include "BoundingBox.h"
 
 class Collision
@@ -33,8 +30,6 @@ public:
     void update();
 
 private:
-    std::unique_ptr<SubMesh> _debugSubMesh;
-
     BoundingBox _boundingBox;
 
     bool _hasCollided;

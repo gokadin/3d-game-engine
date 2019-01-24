@@ -1,0 +1,15 @@
+### PLANE MODEL ###
+
+# MESH
+$mesh_file: plane.obj
+
+# PROPERTIES
+$name: plane
+$size: 100 1 100
+$position: 0 0 0
+	
+# PHYSICS
+$enable_gravity: false
+$enable_collision: true
+$bounding_box: cube
+	

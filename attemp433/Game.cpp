@@ -59,6 +59,12 @@ Game::~Game()
 void Game::load(const std::string rootDirectory)
 {
     _gameLoader.load(rootDirectory);
+    _gameLoader.printModelNames();
+
+    for (auto&[name, model] : _gameLoader.getRegistry().getModels())
+    {
+       this->addModel(model);
+    }
 }
 
 void Game::initGLFW()

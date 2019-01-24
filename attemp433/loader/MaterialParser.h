@@ -3,12 +3,16 @@
 #include <map>
 #include <string>
 
-#include "MeshMaterial.h"
+#include "Registry.h"
+#include "../MeshMaterial.h"
 
 class MaterialParser
 {
 public:
-    std::map<std::string, std::shared_ptr<MeshMaterial>>& parse(std::string filename)
+    MaterialParser(Registry& registry)
+        : _registry(registry) { }
+
+    void parse(std::string filename)
     {
         std::cout << "loading " << filename << std::endl;
 
@@ -30,17 +34,12 @@ public:
         }
 
         file.close();
-
-        return _materials;
     }
 
-    ~MaterialParser()
-    {
-        _materials.clear();
-    }
+    ~MaterialParser() { }
 
 private:
-    std::map<std::string, std::shared_ptr<MeshMaterial>> _materials;
+    Registry& _registry;
     std::string _currentMaterialName;
 
     void parseLine(std::string& line)
@@ -90,7 +89,7 @@ private:
     {
         _currentMaterialName = line.substr(7);
 
-        _materials[_currentMaterialName] = std::make_shared<MeshMaterial>(_currentMaterialName);
+        _registry.registerMaterial(std::make_shared<MeshMaterial>(_currentMaterialName));
     }
 
     void parseAmbientLine(std::string& line)
@@ -103,7 +102,7 @@ private:
         iss >> color.y;
         iss >> color.z;
 
-        _materials[_currentMaterialName]->setAmbientColor(color);
+        _registry.findMaterial(_currentMaterialName)->setAmbientColor(color);
     }
 
     void parseDiffuseLine(std::string& line)
@@ -116,7 +115,7 @@ private:
         iss >> color.y;
         iss >> color.z;
 
-        _materials[_currentMaterialName]->setDiffuseColor(color);
+        _registry.findMaterial(_currentMaterialName)->setDiffuseColor(color);
     }
 
     void parseSpecularLine(std::string& line)
@@ -129,7 +128,7 @@ private:
         iss >> color.y;
         iss >> color.z;
 
-        _materials[_currentMaterialName]->setSpecularColor(color);
+        _registry.findMaterial(_currentMaterialName)->setSpecularColor(color);
     }
 
     void parseSpecularExponentLine(std::string& line)
@@ -140,27 +139,27 @@ private:
         int exponent;
         iss >> exponent;
 
-        _materials[_currentMaterialName]->setSpecularExponent(exponent);
+        _registry.findMaterial(_currentMaterialName)->setSpecularExponent(exponent);
     }
 
     void parseAmbientTextureLine(std::string& line)
     {
         std::string filename = line.substr(8);
 
-        _materials[_currentMaterialName]->addAmbientTexture(filename);
+        _registry.findMaterial(_currentMaterialName)->addAmbientTexture(filename);
     }
 
     void parseDiffuseTextureLine(std::string& line)
     {
         std::string filename = line.substr(8);
 
-        _materials[_currentMaterialName]->addDiffuseTexture(filename);
+        _registry.findMaterial(_currentMaterialName)->addDiffuseTexture(filename);
     }
 
     void parseSpecularTextureLine(std::string& line)
     {
         std::string filename = line.substr(8);
 
-        _materials[_currentMaterialName]->addSpecularTexture(filename);
+        _registry.findMaterial(_currentMaterialName)->addSpecularTexture(filename);
     }
 };

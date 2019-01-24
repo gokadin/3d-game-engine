@@ -1,29 +1,85 @@
 #pragma once
 
-#include <map>
+#include <iostream>
+#include <vector>
+#include <glm.hpp>
+#include <vec3.hpp>
 
-#include "Mesh.h"
 #include "Shader.h"
-#include "ObjLoader.h"
+#include "Mesh.h"
 #include "ItemPhysics.h"
 
 class Model
 {
 private:
-    uint32_t _id;
-    std::vector<std::shared_ptr<Mesh>> _meshes;
+    std::string _name;
+    glm::vec3 _size;
     glm::vec3 _position;
+
+    std::vector<std::shared_ptr<Mesh>> _meshes;
+
+    // up is clean
+
+    glm::vec3 _rotation;
+    glm::vec3 _scale;
+
+    glm::mat4 _ModelMatrix;
+
+    //glm::vec3 _position;
     glm::vec3 _displacement;
     ItemPhysics _physics;
 
-    ObjLoader _objLoader;
+    void updateUniforms(Shader* shader)
+    {
+        shader->setMat4fv(this->_ModelMatrix, "ModelMatrix");
+    }
+
+    void updateModelMatrix()
+    {
+        this->_ModelMatrix = glm::mat4(1.f);
+        this->_ModelMatrix = glm::translate(this->_ModelMatrix, this->_position);
+        this->_ModelMatrix = glm::rotate(this->_ModelMatrix, glm::radians(this->_rotation.x), glm::vec3(1.f, 0.f, 0.f));
+        this->_ModelMatrix = glm::rotate(this->_ModelMatrix, glm::radians(this->_rotation.y), glm::vec3(0.f, 1.f, 0.f));
+        this->_ModelMatrix = glm::rotate(this->_ModelMatrix, glm::radians(this->_rotation.z), glm::vec3(0.f, 0.f, 1.f));
+        this->_ModelMatrix = glm::scale(this->_ModelMatrix, this->_scale);
+    }
 
 public:
-    Model(glm::vec3 position);
+    Model(
+        glm::vec3 position = glm::vec3(0.f),
+        glm::vec3 rotation = glm::vec3(0.f),
+        glm::vec3 scale = glm::vec3(1.f)
+    );
 
     ~Model();
 
-    inline const uint32_t getId() { return _id; }
+    inline const std::string& getName() const { return _name; }
+    inline const glm::vec3& getSize() const { return _size; }
+
+    inline void setName(const std::string name) { _name = name; }
+    inline void setSize(const glm::vec3 size) { _size = size; }
+    inline void setPosition(const glm::vec3 position) { this->_position = position; }
+    inline void setRotation(const glm::vec3 rotation) { this->_rotation = rotation; }
+    inline void setScale(const glm::vec3 scale) { this->_scale = scale; }
+
+    void addMesh(const std::shared_ptr<Mesh>& mesh)
+    {
+        _meshes.push_back(mesh);
+    }
+
+    // up is clean
+
+    void rotate(const glm::vec3 rotation)
+    {
+        this->_rotation += rotation;
+    }
+
+    void scale(const glm::vec3 scale)
+    {
+        this->_scale += scale;
+    }
+
+    // ...
 
     inline ItemPhysics& getPhysics() { return _physics; }
 
@@ -37,11 +93,10 @@ public:
 
     const glm::vec3& getFuturePosition();
 
-    void rotate(glm::vec3 rotation);
-
     void update();
 
     void render(Shader* shader);
 
     void commit();
 };
+

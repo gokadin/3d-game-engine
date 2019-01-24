@@ -22,5 +22,4 @@
 #include "Primitives.h"
 #include "Shader.h"
 #include "Texture.h"
-#include "Mesh.h"
 #include "Model.h"
