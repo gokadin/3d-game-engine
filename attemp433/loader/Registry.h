@@ -22,11 +22,6 @@ public:
 
     std::map<std::string, std::shared_ptr<Model>> getModels() { return _modelRegistry.getModels(); }
 
-    void printModelNames()
-    {
-        _modelRegistry.printModelNames();
-    }
-
 private:
     ModelRegistry _modelRegistry;
     MaterialRegistry _materialRegistry;

@@ -3,8 +3,6 @@
 #include <vector>
 #include <memory>
 
-#include "Model.h"
-
 class WorldPhysics
 {
 public:
@@ -14,11 +12,9 @@ public:
 
     inline void enableGravity() { _gravityEnabled = true; }
 
-    void updateModels(const std::vector<std::shared_ptr<Model>>& models);
+    inline bool isGravityEnabled() { return _gravityEnabled; }
 
 private:
     bool _gravityEnabled;
-
-    void updateModelGravity(const std::shared_ptr<Model>& model);
 };
 

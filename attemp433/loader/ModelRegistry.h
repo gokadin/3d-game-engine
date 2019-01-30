@@ -20,14 +20,6 @@ public:
 
     std::map<std::string, std::shared_ptr<Model>> getModels() { return _models; }
 
-    void printModelNames()
-    {
-        for (auto&[name, model] : _models)
-        {
-            std::cout << model->getSize().x << std::endl;
-        }
-    }
-
 private:
     std::map<std::string, std::shared_ptr<Model>> _models;
 };

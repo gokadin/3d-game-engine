@@ -1,33 +1,10 @@
 #pragma once
 
-#include "libs.h"
-#include "Camera.h"
-#include "WorldPhysics.h"
-#include "CollisionManager.h"
+#include <map>
+
+#include "Scene.h"
 #include "loader/GameLoader.h"
-
-enum shaderEnum
-{
-    SHADER_CORE_PROGRAM = 0
-};
-
-enum textureEnum
-{
-    TEXTURE_TEST = 0,
-    TEXTURE_TEST_SPECULAR,
-    TEXTURE_BRICK,
-    TEXTURE_BRICK_SPECULAR
-};
-
-enum materialEnum
-{
-    MATERIAL_1 = 0
-};
-
-enum meshEnum
-{
-    MESH_QUAD = 0
-};
+#include "InputManager.h"
 
 class Game
 {
@@ -41,53 +18,25 @@ private:
     int _frameBufferWidth;
     int _frameBufferHeight;
 
-    // matrices
-    glm::vec3 _worldUp;
-    glm::vec3 _cameraFront;
-    glm::mat4 _ProjectionMatrix;
-    float _fov;
-    float _nearPlane;
-    float _farPlane;
-
     // delta time
-    float _dt;
-    float _curTime;
-    float _lastTime;
+    double _dt;
+    double _curTime;
+    double _lastTime;
+    double _timer;
+    double _limitFps;
+    int _updateCounter;
+    int _frameCounter;
 
-    // mouse input
-    double _lastMouseX;
-    double _lastMouseY;
-    double _mouseX;
-    double _mouseY;
-    double _mouseOffsetX;
-    double _mouseOffsetY;
-    bool _firstMouse;
+    InputManager _inputManager;
 
     GameLoader _gameLoader;
 
-    // camera
-    Camera _camera;
-
-    std::vector<Shader*> _shaders;
-
-    std::vector<std::shared_ptr<Model>> _models;
-
-    std::vector<glm::vec3*> _lights;
-
-    WorldPhysics _physics;
-
-    CollisionManager _collisionManager;
+    std::unique_ptr<Scene> _scene;
 
     void initGLFW();
     void initWindow(const char* title, bool resizable);
     void initGLEW();
     void initOpenGLOptions();
-    void initMatrices();
-    void initShaders();
-    void initLights();
-    void initUniforms();
-
-    void updateUniforms();
 
 public:
     Game(
@@ -99,17 +48,13 @@ public:
 
     virtual ~Game();
 
-    void load(const std::string rootDirectory);
-
     int getWindowShouldClose();
 
     void setWindowShouldClose();
 
+    void loadScene(const std::string rootDirectory);
+
     void updateDt();
-
-    void updateKeyboardInput();
-
-    void updateMouseInput();
 
     void updateInput();
 
@@ -117,14 +62,9 @@ public:
 
     void render();
 
-    // setup
+    inline InputManager& getInputManager() { return _inputManager; }
 
-    void addModel(std::shared_ptr<Model>& model)
-    {
-        _models.push_back(model);
-    }
-
-    inline WorldPhysics& getPhysics() { return _physics; }
+    inline std::unique_ptr<Scene>& getScene() { return _scene; }
 
     // static
 

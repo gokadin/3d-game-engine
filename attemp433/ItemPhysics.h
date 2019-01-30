@@ -11,7 +11,8 @@ class ItemPhysics
 public:
     ItemPhysics()
         : _gravityEnabled(false), _collisionEnabled(false)
-        , _acceleration(glm::vec3(0.f)) { }
+        , _acceleration(glm::vec3(0.f))
+        , _velocity(glm::vec3(0.f)) { }
 
     inline Collision& getCollision() { return _collision; }
 
@@ -38,4 +39,5 @@ private:
     bool _collisionEnabled;
 
     glm::vec3 _acceleration;
+    glm::vec3 _velocity;
 };

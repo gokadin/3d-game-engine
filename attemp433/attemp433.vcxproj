@@ -23,6 +23,7 @@
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="loader\GameLoader.cpp" />
     <ClCompile Include="loader\MaterialRegistry.cpp" />
     <ClCompile Include="loader\MeshRegistry.cpp" />
@@ -31,6 +32,8 @@
     <ClCompile Include="loader\Registry.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="physics\PhysicsEngine.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="WorldPhysics.cpp" />
   </ItemGroup>
@@ -40,7 +43,9 @@
     <ClInclude Include="Character.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="enums.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="ItemPhysics.h" />
     <ClInclude Include="libs.h" />
     <ClInclude Include="loader\GameLoader.h" />
@@ -53,7 +58,9 @@
     <ClInclude Include="loader\Registry.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="MeshMaterial.h" />
+    <ClInclude Include="physics\PhysicsEngine.h" />
     <ClInclude Include="Primitives.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Texture.h" />

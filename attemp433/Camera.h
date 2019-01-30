@@ -10,13 +10,7 @@
 #include <mat4x4.hpp>
 #include <gtc\matrix_transform.hpp>
 
-enum direction
-{
-    FORWARD = 0,
-    BACKWARD, 
-    LEFT,
-    RIGHT
-};
+#include "enums.h"
 
 class Camera
 {
@@ -50,7 +44,7 @@ private:
 public:
     Camera(glm::vec3 position, glm::vec3 direction, glm::vec3 worldUp)
         : _position(position), _worldUp(worldUp)
-        , _movementSpeed(15.f), _sensitivity(5.f)
+        , _movementSpeed(1.f), _sensitivity(0.1f)
     {
 
     }
@@ -71,31 +65,31 @@ public:
         return _position;
     }
 
-    void move(const float& dt, const int direction)
+    void move(const int direction)
     {
         switch (direction)
         {
-        case FORWARD:
-            _position += _front * _movementSpeed * dt;
+        case AT_CAMERA_DIRECTION_FORWARD:
+            _position += _front * _movementSpeed;
             break;
-        case BACKWARD:
-            _position -= _front * _movementSpeed * dt;
+        case AT_CAMERA_DIRECTION_BACKWARD:
+            _position -= _front * _movementSpeed;
             break;
-        case LEFT:
-            _position -= _right * _movementSpeed * dt;
+        case AT_CAMERA_DIRECTION_LEFT:
+            _position -= _right * _movementSpeed;
             break;
-        case RIGHT:
-            _position += _right * _movementSpeed * dt;
+        case AT_CAMERA_DIRECTION_RIGHT:
+            _position += _right * _movementSpeed;
             break;
         default:
             break;
         }
     }
 
-    void updateMouseInput(const float& dt, const double& offsetX, const double& offsetY)
+    void updateMouseInput(const double& offsetX, const double& offsetY)
     {
-        _pitch -= static_cast<GLfloat>(offsetY) * _sensitivity * dt;
-        _yaw += static_cast<GLfloat>(offsetX) * _sensitivity * dt;
+        _pitch -= static_cast<GLfloat>(offsetY) * _sensitivity;
+        _yaw += static_cast<GLfloat>(offsetX) * _sensitivity;
 
         if (_pitch > 80.f)
             _pitch = 80.f;
@@ -104,10 +98,5 @@ public:
 
         if (_yaw > 360.f || _yaw < -360.f)
             _yaw = 0.f;
-    }
-
-    void updateInput(const float& dt, const int direction, const double& offsetX, const double& offsetY)
-    {
-        this->updateMouseInput(dt, offsetX, offsetY);
     }
 };

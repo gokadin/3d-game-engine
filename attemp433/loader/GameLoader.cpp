@@ -19,4 +19,6 @@ void GameLoader::load(const std::string& rootDirectory)
     }
 
     _modelLoader.load(rootDirectory + "/" + MODEL_DIRECTORY);
+
+    std::cout << "info::GameLoader::load::game_finished_loading" << std::endl;
 }

@@ -8,62 +8,41 @@ Game::Game(
 )
     : _WINDOW_WIDTH(WINDOW_WIDTH), _WINDOW_HEIGHT(WINDOW_HEIGHT)
     , _GL_VERSION_MAJOR(GL_VERSION_MAJOR), _GL_VERSION_MINOR(GL_VERSION_MINOR)
-    , _camera(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 1.f, 0.f))
 {
     _window = nullptr;
+
     _frameBufferWidth = WINDOW_WIDTH;
-    _frameBufferHeight = WINDOW_HEIGHT;
+    _frameBufferHeight = WINDOW_WIDTH;
 
-    _fov = 60.f;
-    _nearPlane = 0.1f;
-    _farPlane = 1000.f;
-
-    _dt = 0.f;
-    _curTime = 0.f;
-    _lastMouseX = 0.f;
-
-    _lastMouseX = 0.0;
-    _lastMouseY = 0.0;
-    _mouseX = 0.0;
-    _mouseY = 0.0;
-    _mouseOffsetX = 0.0;
-    _mouseOffsetY = 0.0;
-    _firstMouse = true;
+    _dt = 0.0;
+    _curTime = 0.0;
+    _lastTime = glfwGetTime();
+    _timer = _lastTime;
+    _limitFps = 1.0 / 100.0;
+    _updateCounter = 0;
+    _frameCounter = 0;
 
     this->initGLFW();
     this->initWindow(title, resizable);
     this->initGLEW();
     this->initOpenGLOptions();
-    this->initMatrices();
-    this->initShaders();
-    this->initLights();
-    this->initUniforms();
 }
 
 Game::~Game()
 {
     glfwDestroyWindow(_window);
     glfwTerminate();
-
-    for (size_t i = 0; i < _shaders.size(); i++)
-    {
-        delete _shaders[i];
-    }
-
-    for (size_t i = 0; i < _lights.size(); i++)
-    {
-        delete _lights[i];
-    }
 }
 
-void Game::load(const std::string rootDirectory)
+void Game::loadScene(const std::string rootDirectory)
 {
+    _scene = std::make_unique<Scene>(_window, _GL_VERSION_MAJOR, _GL_VERSION_MINOR, _WINDOW_WIDTH, _WINDOW_HEIGHT);
+
     _gameLoader.load(rootDirectory);
-    _gameLoader.printModelNames();
 
     for (auto&[name, model] : _gameLoader.getRegistry().getModels())
     {
-       this->addModel(model);
+       _scene->addModel(name, model);
     }
 }
 
@@ -123,51 +102,6 @@ void Game::initOpenGLOptions()
     glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
-void Game::initMatrices()
-{
-    _ProjectionMatrix = glm::mat4(1.f);
-    _ProjectionMatrix = glm::perspective(
-        glm::radians(_fov),
-        static_cast<float>(_frameBufferWidth) / _frameBufferHeight,
-        _nearPlane,
-        _farPlane
-    );
-}
-
-void Game::initShaders()
-{
-    _shaders.push_back(new Shader(_GL_VERSION_MAJOR, _GL_VERSION_MINOR, "vertex_core.glsl", "fragment_core.glsl"));
-}
-
-void Game::initLights()
-{
-    _lights.push_back(new glm::vec3(0.f, 4.f, -2.f));
-}
-
-void Game::initUniforms()
-{
-    _shaders[SHADER_CORE_PROGRAM]->setMat4fv(_camera.getViewMatrix(), "ViewMatrix");
-    _shaders[SHADER_CORE_PROGRAM]->setMat4fv(_ProjectionMatrix, "ProjectionMatrix");
-
-    _shaders[SHADER_CORE_PROGRAM]->setVec3f(*_lights[0], "lightPos0");
-}
-
-void Game::updateUniforms()
-{
-    _shaders[SHADER_CORE_PROGRAM]->setMat4fv(_camera.getViewMatrix(), "ViewMatrix");
-    _shaders[SHADER_CORE_PROGRAM]->setVec3f(_camera.getPosition(), "cameraPos");
-
-    glfwGetFramebufferSize(_window, &_frameBufferWidth, &_frameBufferHeight);
-
-    _ProjectionMatrix = glm::perspective(
-        glm::radians(_fov),
-        static_cast<float>(_frameBufferWidth) / _frameBufferHeight,
-        _nearPlane,
-        _farPlane
-    );
-    _shaders[SHADER_CORE_PROGRAM]->setMat4fv(_ProjectionMatrix, "ProjectionMatrix");
-}
-
 int Game::getWindowShouldClose()
 {
     return glfwWindowShouldClose(_window);
@@ -180,61 +114,14 @@ void Game::setWindowShouldClose()
 
 void Game::updateDt()
 {
-    _curTime = static_cast<float>(glfwGetTime());
+    _curTime = glfwGetTime();
     _dt = _curTime - _lastTime;
     _lastTime = _curTime;
 }
 
-void Game::updateKeyboardInput()
-{
-    if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(_window, GLFW_TRUE);
-    }
-
-    if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS)
-    {
-        _camera.move(_dt, FORWARD);
-    }
-    if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS)
-    {
-        _camera.move(_dt, BACKWARD);
-    }
-    if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS)
-    {
-        _camera.move(_dt, LEFT);
-    }
-    if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS)
-    {
-        _camera.move(_dt, RIGHT);
-    }
-}
-
-void Game::updateMouseInput()
-{
-    glfwGetCursorPos(_window, &_mouseX, &_mouseY);
-
-    if (_firstMouse)
-    {
-        _lastMouseX = _mouseX;
-        _lastMouseY = _mouseY;
-        _firstMouse = false;
-    }
-
-    _mouseOffsetX = _mouseX - _lastMouseX;
-    _mouseOffsetY = _mouseY - _lastMouseY;
-
-    _lastMouseX = _mouseX;
-    _lastMouseY = _mouseY;
-}
-
 void Game::updateInput()
 {
-    glfwPollEvents();
-
-    this->updateKeyboardInput();
-    this->updateMouseInput();
-    _camera.updateInput(_dt, 1, _mouseOffsetX, _mouseOffsetY);
+    _inputManager.updateInput(_scene, _window);
 }
 
 void Game::update()
@@ -242,13 +129,17 @@ void Game::update()
     this->updateDt();
     this->updateInput();
 
-    _physics.updateModels(_models);
+    _scene->update(_dt);
 
-    _collisionManager.updateCollisions(_models);
+    _updateCounter++;
 
-    for (auto& model : _models)
+    if (glfwGetTime() - _timer > 1.0)
     {
-        model->update();
+        //std::cout << "FPS: " << _frameCounter << " UPS: " << _updateCounter << std::endl;
+
+        _timer++;
+        _updateCounter = 0;
+        _frameCounter = 0;
     }
 }
 
@@ -257,12 +148,9 @@ void Game::render()
     glClearColor(0.f, 0.f, 0.f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    this->updateUniforms();
+    _scene->render();
 
-    for (auto& i : _models)
-    {
-        i->render(_shaders[SHADER_CORE_PROGRAM]);
-    }
+    _frameCounter++;
 
     glfwSwapBuffers(_window);
     glFlush();

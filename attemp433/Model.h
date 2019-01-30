@@ -15,8 +15,11 @@ private:
     std::string _name;
     glm::vec3 _size;
     glm::vec3 _position;
+    glm::vec3 _velocity;
 
     std::vector<std::shared_ptr<Mesh>> _meshes;
+
+    ItemPhysics _physics;
 
     // up is clean
 
@@ -24,10 +27,6 @@ private:
     glm::vec3 _scale;
 
     glm::mat4 _ModelMatrix;
-
-    //glm::vec3 _position;
-    glm::vec3 _displacement;
-    ItemPhysics _physics;
 
     void updateUniforms(Shader* shader)
     {
@@ -62,6 +61,9 @@ public:
     inline void setRotation(const glm::vec3 rotation) { this->_rotation = rotation; }
     inline void setScale(const glm::vec3 scale) { this->_scale = scale; }
 
+    inline void setVelocity(const glm::vec3 velocity) { this->_velocity = velocity; }
+    inline void addVelocity(const glm::vec3 velocity) { this->_velocity += velocity; }
+
     void addMesh(const std::shared_ptr<Mesh>& mesh)
     {
         _meshes.push_back(mesh);
@@ -83,20 +85,10 @@ public:
 
     inline ItemPhysics& getPhysics() { return _physics; }
 
-    void load(std::string filename);
-
     inline const glm::vec3& getPosition() { return _position; }
-
-    void setDisplacement(const glm::vec3 displacement);
-
-    void move(const glm::vec3 displacement);
-
-    const glm::vec3& getFuturePosition();
 
     void update();
 
     void render(Shader* shader);
-
-    void commit();
 };
 

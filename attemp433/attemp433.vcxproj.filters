@@ -13,43 +13,16 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\engine">
-      <UniqueIdentifier>{18642966-da9e-4fed-925d-db1ef3e8e6db}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\engine\character">
-      <UniqueIdentifier>{085577c5-3e4c-44ba-9ab6-f72a2f33fad8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\engine\core">
-      <UniqueIdentifier>{9a0e7fb0-c9cc-4a5e-8a74-1e7dfb7ecea4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\engine\world">
-      <UniqueIdentifier>{769b4278-c7b6-4e2e-900b-5603c73e9410}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\game">
-      <UniqueIdentifier>{817f3836-4bea-4da8-adcb-ce1160e7a7df}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\engine">
-      <UniqueIdentifier>{bf4e88b6-3ab8-4b68-99f7-eb00fa6912de}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\engine\character">
-      <UniqueIdentifier>{fd2fb221-d9fe-4c2d-96a9-17df861654fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\engine\core">
-      <UniqueIdentifier>{9e407d15-d9a7-42f3-814d-b3ee1ca74705}</UniqueIdentifier>
-    </Filter>
     <Filter Include="loader">
       <UniqueIdentifier>{7c47fa1a-d27a-4931-b512-555d18006537}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="physics">
+      <UniqueIdentifier>{2e3b0384-cfe0-458a-9c16-c8c21df83a5f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Character.cpp">
-      <Filter>Source Files\engine\character</Filter>
-    </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Source Files\engine\core</Filter>
     </ClCompile>
     <ClCompile Include="Collision.cpp">
       <Filter>Source Files</Filter>
@@ -84,32 +57,23 @@
     <ClCompile Include="loader\ModelLoader.cpp">
       <Filter>loader</Filter>
     </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\PhysicsEngine.cpp">
+      <Filter>physics</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Character.h">
-      <Filter>Header Files\engine\character</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files\engine\core</Filter>
-    </ClInclude>
-    <ClInclude Include="Primitives.h">
-      <Filter>Header Files\engine\core</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Header Files\engine\core</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files\engine\core</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Header Files\engine\core</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Header Files\engine\core</Filter>
-    </ClInclude>
-    <ClInclude Include="libs.h">
-      <Filter>Header Files\engine\core</Filter>
-    </ClInclude>
     <ClInclude Include="ItemPhysics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -131,9 +95,6 @@
     <ClInclude Include="loader\GameLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Header Files\engine\core</Filter>
-    </ClInclude>
     <ClInclude Include="loader\ModelRegistry.h">
       <Filter>loader</Filter>
     </ClInclude>
@@ -149,9 +110,6 @@
     <ClInclude Include="loader\ModelLoader.h">
       <Filter>loader</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Header Files\engine\core</Filter>
-    </ClInclude>
     <ClInclude Include="loader\ObjLoader.h">
       <Filter>loader</Filter>
     </ClInclude>
@@ -159,6 +117,48 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="loader\MaterialParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Primitives.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\PhysicsEngine.h">
+      <Filter>physics</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="enums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

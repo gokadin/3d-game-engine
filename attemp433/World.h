@@ -9,7 +9,7 @@ public:
 
     ~World();
 
-    inline WorldPhysics& getPhysics() { return _physics; }
+    WorldPhysics& getPhysics() { return _physics; }
     
 private:
     WorldPhysics _physics;

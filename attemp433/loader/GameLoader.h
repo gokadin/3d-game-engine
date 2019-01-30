@@ -18,11 +18,6 @@ public:
 
     inline Registry& getRegistry() { return _registry; }
 
-    void printModelNames()
-    {
-        _registry.printModelNames();
-    }
-
 private:
     const std::string MODEL_DIRECTORY = "models";
 
