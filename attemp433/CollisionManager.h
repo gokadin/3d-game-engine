@@ -1,6 +1,7 @@
 #pragma once
 
-#include <vector>
+#include <map>
+#include <string>
 #include <memory>
 
 #include "Model.h"
@@ -12,6 +13,6 @@ public:
 
     ~CollisionManager();
 
-    void updateCollisions(const std::vector<std::shared_ptr<Model>>& models);
+    void updateCollisions(const std::map<std::string, std::shared_ptr<Model>>& models);
 };
 

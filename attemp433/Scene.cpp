@@ -89,6 +89,8 @@ void Scene::update(const double& dt)
 {
     _physicsEngine.update(_world.getPhysics(), _models, dt);
 
+    _collisionManager.updateCollisions(_models);
+
     for (auto& [name, model] : _models)
     {
         model->update();

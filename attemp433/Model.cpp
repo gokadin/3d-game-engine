@@ -14,6 +14,10 @@ Model::~Model()
 void Model::update()
 {
     _position += _velocity * (1.f / 60.f);
+
+    _physics.getCollision().move(_velocity * (1.f / 60.f));
+
+    _physics.getCollision().update();
 }
 
 void Model::render(Shader* shader)

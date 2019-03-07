@@ -24,6 +24,6 @@ void PhysicsEngine::update(WorldPhysics& worldPhysics, std::map<std::string, std
             continue;
         }
 
-        // ...
+        model->addVelocity(glm::vec3(0.f, -9.8f / 60.f, 0.f));
     }
 }
